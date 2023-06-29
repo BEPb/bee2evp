@@ -1,0 +1,63 @@
+language: c
+os: linux
+dist: focal
+sudo: required
+
+env:
+  global:
+    - OPENSSL_BRANCH=OpenSSL_1_1_1i
+    - BEE2_BRANCH=master
+    - PREFIX=${HOME}/usr/local
+    - CODECOV_TOKEN="14692d3c-1602-496f-8bb4-24797238978d"
+
+branches:
+  only:
+  - master
+
+matrix:
+  include:
+  - compiler: gcc
+
+install:
+  - sudo apt-get install -y lcov
+
+before_script:
+  - git submodule update --init --remote
+  - cd ..
+  - git clone --depth 1 -b ${OPENSSL_BRANCH} https://github.com/openssl/openssl.git
+  - cd openssl
+  - git apply ../bee2evp/btls/openssl111i.patch
+  - cp ../bee2evp/btls/btls.c ./ssl/
+  - cp ../bee2evp/btls/btls.h ./ssl/
+  - mkdir build
+  - cd build
+  - ../config shared -d --prefix=${PREFIX} --openssldir=${PREFIX}
+  - make -j$(nproc) all 
+  - make install > build.log 2>&1 || (cat build.log && exit 1)
+  - mv ${PREFIX}/openssl.cnf.dist ${PREFIX}/openssl.cnf
+  - sed -i "/\[ new\_oids\ ]/i openssl_conf = openssl_init\n[ openssl_init ]\nengines = engine_section\n[ engine_section ]\nbee2evp = bee2evp_section\n[ bee2evp_section ]\nengine_id = bee2evp\ndynamic_path = ${PREFIX}/lib/libbee2evp.so\ndefault_algorithms = ALL" ${PREFIX}/openssl.cnf
+  - cd ../../bee2evp/bee2
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_PIC=ON -DCMAKE_INSTALL_PREFIX=${PREFIX} ..
+  - make > build.log 2>&1 || (cat build.log && exit 1)
+  - make install > build.log 2>&1 || (cat build.log && exit 1)
+  - cd ../..
+
+script:
+  - export LD_LIBRARY_PATH="${PREFIX}/lib:${LD_LIBRARY_PATH:-}"
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Coverage \
+      -DBEE2_LIBRARY_DIRS=${PREFIX}/lib -DBEE2_INCLUDE_DIRS=${PREFIX}/include \
+      -DOPENSSL_LIBRARY_DIRS=${PREFIX}/lib -DOPENSSL_INCLUDE_DIRS=${PREFIX}/include \
+      -DLIB_INSTALL_DIR=${PREFIX}/lib -DCMAKE_INSTALL_PREFIX=${PREFIX} .. 
+  - make
+  - make install > build.log 2>&1 || (cat build.log && exit 1)
+  - cp -a ../test/. .
+  - lcov -c -i -d . -o coverage_base.info
+  - python test.py
+  - lcov -c -d . -o coverage_test.info
+  - lcov -a coverage_base.info -a coverage_test.info -o coverage.info
+  - LD_LIBRARY_PATH=$(echo "$LD_LIBRARY_PATH" | sed -e "s|$PREFIX/lib:||")
+  - bash <(curl -s https://codecov.io/bash) -f coverage.info

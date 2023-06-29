@@ -1,0 +1,166 @@
+###############################################################################
+# \brief OpenSSL[bee2evp] configuration file
+###############################################################################
+
+HOME = ./out
+RANDFILE = $HOME/.rnd
+openssl_conf = openssl_init
+
+[openssl_init]
+oid_section = new_oids
+engines = engine_section
+
+[engine_section]
+bee2evp = bee2evp_section
+
+[bee2evp_section]
+engine_id = bee2evp
+dynamic_path = #path/to/bee2evp
+default_algorithms = ALL
+
+[new_oids]
+bpki = 1.2.112.0.2.0.34.101.78
+bpki-role-ca0 = ${bpki}.2.0
+bpki-role-ca1 = ${bpki}.2.1
+bpki-role-ca2 = ${bpki}.2.2
+bpki-role-aa  = ${bpki}.2.10
+bpki-role-ra = ${bpki}.2.20
+bpki-role-ocsp = ${bpki}.2.30
+bpki-role-tsa = ${bpki}.2.31
+bpki-role-dvcs = ${bpki}.2.32
+# identification servers
+bpki-role-ids = ${bpki}.2.33
+bpki-role-tls = ${bpki}.2.50
+# natural persons
+bpki-role-np = ${bpki}.2.60
+# foreign natural persons
+bpki-role-fnp = ${bpki}.2.61
+# legal representatives
+bpki-role-lr = ${bpki}.2.62
+# autonomous cryptographic devices
+bpki-role-acd = ${bpki}.2.70
+# server of Terminal Mode
+bpki-eku-serverTM = ${bpki}.3.1
+# client of Terminal Mode
+bpki-eku-clientTM = ${bpki}.3.2
+# Enroll1 request
+bpki-ct-enroll1-req = ${bpki}.5.1
+# Enroll2 request
+bpki-ct-enroll2-req = ${bpki}.5.2
+# Reenroll request
+bpki-ct-reenroll-req = ${bpki}.5.3
+# Spawn request
+bpki-ct-spawn-req = ${bpki}.5.4
+# Setpwd request
+bpki-ct-setpwd-req = ${bpki}.5.5
+# Revoke request
+bpki-ct-revoke-req = ${bpki}.5.6
+# BPKIResp
+bpki-ct-resp = ${bpki}.5.7
+
+[crlexts]
+authorityKeyIdentifier = keyid:always
+
+[ca0]
+dir = $HOME/ca0
+database = $dir/index.txt
+new_certs_dir = $dir/certs
+serial = $dir/serial
+crlnumber = $dir/crlnumber
+crl = $dir/crl
+private_key = $dir/privkey
+certificate = $dir/cert
+default_days = 7300
+default_crl_days = 10
+default_md = bash512
+policy = policy_ca0
+copy_extensions = none
+unique_subject = no
+preserve = yes # keep passed DN ordering
+email_in_dn = no
+
+[ca1]
+dir = $HOME/ca1
+database = $dir/index.txt
+new_certs_dir = $dir/certs
+serial = $dir/serial
+crlnumber = $dir/crlnumber
+crl = $dir/crl
+private_key = $dir/privkey
+certificate = $dir/cert
+default_days = 1825
+default_crl_days = 10
+default_md = bash384
+policy = policy_ca1
+copy_extensions = copyall
+unique_subject = no
+preserve = yes
+email_in_dn = no
+
+[ca2]
+dir = $HOME/ca2
+database = $dir/index.txt
+new_certs_dir = $dir/certs
+serial = $dir/serial
+crlnumber = $dir/crlnumber
+crl = $dir/crl
+private_key = $dir/privkey
+certificate = $dir/cert
+default_days = 1825
+default_crl_days = 30
+default_md = belt-hash
+policy = policy_anything
+copy_extensions = copy
+unique_subject = no
+preserve = yes
+email_in_dn = no
+
+[policy_ca0]
+commonName = supplied
+name = supplied
+countryName	= match
+localityName = supplied
+stateOrProvinceName	= optional
+#streetAddress = supplied
+organizationName = supplied
+organizationalUnitName = optional
+organizationIdentifier = supplied
+
+[policy_ca1]
+commonName = supplied
+surname = optional
+name = optional
+givenName = optional
+serialNumber = optional
+countryName	= supplied # can differ from BY
+localityName = optional
+stateOrProvinceName	= optional
+organizationName = optional
+organizationalUnitName = optional
+organizationIdentifier = optional
+
+[policy_ca2]
+commonName = supplied
+surname = supplied
+givenName = supplied
+serialNumber = supplied
+countryName	= match
+
+[tsa]
+default_tsa = tsa_config
+
+[tsa_config]
+dir = $HOME/tsa
+serial = $dir/tsaserial
+crypto_device = bee2evp
+signer_cert	= $dir/cert
+certs = $dir/cert
+signer_key = $dir/private/privkey
+default_policy = bpki-role-tsa
+digests = belt-hash, bash256, bash384, bash512
+signer_digest = belt-hash
+accuracy = secs:0, millisecs:500, microsecs:100
+clock_precision_digits = 0
+ordering = no
+tsa_name = no
+ess_cert_id_chain = no

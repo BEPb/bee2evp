@@ -1,0 +1,4 @@
+[submodule "bee2"]
+	path = bee2
+	url = https://github.com/agievich/bee2
+	shallow = true

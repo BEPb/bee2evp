@@ -1,0 +1,731 @@
+diff --git a/ssl/build.info b/ssl/build.info
+index bb2f1deb..e15d5cb0 100644
+--- a/ssl/build.info
++++ b/ssl/build.info
+@@ -12,4 +12,5 @@ SOURCE[../libssl]=\
+         ssl_asn1.c ssl_txt.c ssl_init.c ssl_conf.c  ssl_mcnf.c \
+         bio_ssl.c ssl_err.c tls_srp.c t1_trce.c ssl_utst.c \
+         record/ssl3_buffer.c record/ssl3_record.c record/dtls1_bitmap.c \
+-        statem/statem.c record/ssl3_record_tls13.c
++        statem/statem.c record/ssl3_record_tls13.c \
++        btls.c
+diff --git a/ssl/s3_lib.c b/ssl/s3_lib.c
+index 4511b52c..49190d3a 100644
+--- a/ssl/s3_lib.c
++++ b/ssl/s3_lib.c
+@@ -17,6 +17,7 @@
+ #include <openssl/dh.h>
+ #include <openssl/rand.h>
+ #include "internal/cryptlib.h"
++#include "btls.h"
+ 
+ #define TLS13_NUM_CIPHERS       OSSL_NELEM(tls13_ciphers)
+ #define SSL3_NUM_CIPHERS        OSSL_NELEM(ssl3_ciphers)
+@@ -3174,6 +3175,135 @@ static SSL_CIPHER ssl3_ciphers[] = {
+      256,
+      },
+ #endif /* OPENSSL_NO_ARIA */
++    {
++     1,
++     BTLS1_TXT_DHE_BIGN_WITH_BELT_CTR_MAC_HBELT,
++     BTLS1_RFC_DHE_BIGN_WITH_BELT_CTR_MAC_HBELT,
++     0x0300ff15,
++     SSL_kBDHE,
++     SSL_aBIGN,
++     SSL_BELTCTR,
++     SSL_BELTMAC,
++     TLS1_2_VERSION, TLS1_2_VERSION,
++     0, 0,
++     SSL_HIGH,
++     SSL_HANDSHAKE_MAC_HBELT | TLS1_PRF_HBELT,
++     256,
++     256,
++     },
++    {
++     1,
++     BTLS1_TXT_DHE_BIGN_WITH_BELT_DWP_HBELT,
++     BTLS1_RFC_DHE_BIGN_WITH_BELT_DWP_HBELT,
++     0x0300ff16,
++     SSL_kBDHE,
++     SSL_aBIGN,
++     SSL_BELTDWP,
++     SSL_AEAD,
++     TLS1_2_VERSION, TLS1_2_VERSION,
++     0, 0,
++     SSL_HIGH,
++     SSL_HANDSHAKE_MAC_HBELT | TLS1_PRF_HBELT,
++     256,
++     256,
++     },
++    {
++     1,
++     BTLS1_TXT_DHT_BIGN_WITH_BELT_CTR_MAC_HBELT,
++     BTLS1_RFC_DHT_BIGN_WITH_BELT_CTR_MAC_HBELT,
++     0x0300ff17,
++     SSL_kBDHT,
++     SSL_aBIGN,
++     SSL_BELTCTR,
++     SSL_BELTMAC,
++     TLS1_2_VERSION, TLS1_2_VERSION,
++     0, 0,
++     SSL_HIGH,
++     SSL_HANDSHAKE_MAC_HBELT | TLS1_PRF_HBELT,
++     256,
++     256,
++     },
++    {
++     1,
++     BTLS1_TXT_DHT_BIGN_WITH_BELT_DWP_HBELT,
++     BTLS1_RFC_DHT_BIGN_WITH_BELT_DWP_HBELT,
++     0x0300ff18,
++     SSL_kBDHT,
++     SSL_aBIGN,
++     SSL_BELTDWP,
++     SSL_AEAD,
++     TLS1_2_VERSION, TLS1_2_VERSION,
++     0, 0,
++     SSL_HIGH,
++     SSL_HANDSHAKE_MAC_HBELT | TLS1_PRF_HBELT,
++     256,
++     256,
++     },
++
++    {
++     1,
++     BTLS1_TXT_DHE_PSK_BIGN_WITH_BELT_CTR_MAC_HBELT,
++     BTLS1_RFC_DHE_PSK_BIGN_WITH_BELT_CTR_MAC_HBELT,
++     0x0300ff19,
++     SSL_kBDHEPSK,
++     SSL_aPSK,
++     SSL_BELTCTR,
++     SSL_BELTMAC,
++     TLS1_2_VERSION, TLS1_2_VERSION,
++     0, 0,
++     SSL_HIGH,
++     SSL_HANDSHAKE_MAC_HBELT | TLS1_PRF_HBELT,
++     256,
++     256,
++     },
++    {
++     1,
++     BTLS1_TXT_DHE_PSK_BIGN_WITH_BELT_DWP_HBELT,
++     BTLS1_RFC_DHE_PSK_BIGN_WITH_BELT_DWP_HBELT,
++     0x0300ff1a,
++     SSL_kBDHEPSK,
++     SSL_aPSK,
++     SSL_BELTDWP,
++     SSL_AEAD,
++     TLS1_2_VERSION, TLS1_2_VERSION,
++     0, 0,
++     SSL_HIGH,
++     SSL_HANDSHAKE_MAC_HBELT | TLS1_PRF_HBELT,
++     256,
++     256,
++     },
++    {
++     1,
++     BTLS1_TXT_DHT_PSK_BIGN_WITH_BELT_CTR_MAC_HBELT,
++     BTLS1_RFC_DHT_PSK_BIGN_WITH_BELT_CTR_MAC_HBELT,
++     0x0300ff1b,
++     SSL_kBDHTPSK,
++     SSL_aBIGN,
++     SSL_BELTCTR,
++     SSL_BELTMAC,
++     TLS1_2_VERSION, TLS1_2_VERSION,
++     0, 0,
++     SSL_HIGH,
++     SSL_HANDSHAKE_MAC_HBELT | TLS1_PRF_HBELT,
++     256,
++     256,
++     },
++    {
++     1,
++     BTLS1_TXT_DHT_PSK_BIGN_WITH_BELT_DWP_HBELT,
++     BTLS1_RFC_DHT_PSK_BIGN_WITH_BELT_DWP_HBELT,
++     0x0300ff1c,
++     SSL_kBDHTPSK,
++     SSL_aBIGN,
++     SSL_BELTDWP,
++     SSL_AEAD,
++     TLS1_2_VERSION, TLS1_2_VERSION,
++     0, 0,
++     SSL_HIGH,
++     SSL_HANDSHAKE_MAC_HBELT | TLS1_PRF_HBELT,
++     256,
++     256,
++     },
+ };
+ 
+ /*
+@@ -4342,6 +4472,11 @@ int ssl3_get_req_cert_type(SSL *s, WPACKET *pkt)
+                     && WPACKET_put_bytes_u8(pkt, TLS_CT_GOST12_512_SIGN);
+ #endif
+ 
++    if (s->version >= TLS1_VERSION && (alg_k & SSL_kBDHE))
++            return WPACKET_put_bytes_u8(pkt, TLS_CT_BIGN_SIGN);
++    if (s->version >= TLS1_VERSION && (alg_k & SSL_kBDHTPSK))
++            return WPACKET_put_bytes_u8(pkt, TLS_CT_BIGN_SIGN);
++
+     if ((s->version == SSL3_VERSION) && (alg_k & SSL_kDHE)) {
+ #ifndef OPENSSL_NO_DH
+ # ifndef OPENSSL_NO_RSA
+diff --git a/ssl/ssl_cert_table.h b/ssl/ssl_cert_table.h
+index 0c47241c..76c52283 100644
+--- a/ssl/ssl_cert_table.h
++++ b/ssl/ssl_cert_table.h
+@@ -10,6 +10,8 @@
+ /*
+  * Certificate table information. NB: table entries must match SSL_PKEY indices
+  */
++#include "btls.h"
++
+ static const SSL_CERT_LOOKUP ssl_cert_info [] = {
+     {EVP_PKEY_RSA, SSL_aRSA}, /* SSL_PKEY_RSA */
+     {EVP_PKEY_RSA_PSS, SSL_aRSA}, /* SSL_PKEY_RSA_PSS_SIGN */
+@@ -19,5 +21,6 @@ static const SSL_CERT_LOOKUP ssl_cert_info [] = {
+     {NID_id_GostR3410_2012_256, SSL_aGOST12}, /* SSL_PKEY_GOST12_256 */
+     {NID_id_GostR3410_2012_512, SSL_aGOST12}, /* SSL_PKEY_GOST12_512 */
+     {EVP_PKEY_ED25519, SSL_aECDSA}, /* SSL_PKEY_ED25519 */
+-    {EVP_PKEY_ED448, SSL_aECDSA} /* SSL_PKEY_ED448 */
++    {EVP_PKEY_ED448, SSL_aECDSA}, /* SSL_PKEY_ED448 */
++    {NID_bign_pubkey, SSL_aBIGN}, /* SSL_PKEY_BIGN */
+ };
+diff --git a/ssl/ssl_ciph.c b/ssl/ssl_ciph.c
+index 735a483c..c3272d44 100644
+--- a/ssl/ssl_ciph.c
++++ b/ssl/ssl_ciph.c
+@@ -20,6 +20,7 @@
+ #include "ssl_local.h"
+ #include "internal/thread_once.h"
+ #include "internal/cryptlib.h"
++#include "btls.h"
+ 
+ #define SSL_ENC_DES_IDX         0
+ #define SSL_ENC_3DES_IDX        1
+@@ -43,7 +44,7 @@
+ #define SSL_ENC_CHACHA_IDX      19
+ #define SSL_ENC_ARIA128GCM_IDX  20
+ #define SSL_ENC_ARIA256GCM_IDX  21
+-#define SSL_ENC_NUM_IDX         22
++#define SSL_ENC_NUM_IDX         24
+ 
+ /* NB: make sure indices in these tables match values above */
+ 
+@@ -76,6 +77,8 @@ static const ssl_cipher_table ssl_cipher_table_cipher[SSL_ENC_NUM_IDX] = {
+     {SSL_CHACHA20POLY1305, NID_chacha20_poly1305}, /* SSL_ENC_CHACHA_IDX 19 */
+     {SSL_ARIA128GCM, NID_aria_128_gcm}, /* SSL_ENC_ARIA128GCM_IDX 20 */
+     {SSL_ARIA256GCM, NID_aria_256_gcm}, /* SSL_ENC_ARIA256GCM_IDX 21 */
++    {SSL_BELTCTR, NID_belt_ctrt}, /* SSL_ENC_BELTCTR_IDX 22 */
++    {SSL_BELTDWP, NID_belt_dwpt}, /* SSL_ENC_BELTDWP_IDX 23 */
+ };
+ 
+ static const EVP_CIPHER *ssl_cipher_methods[SSL_ENC_NUM_IDX];
+@@ -110,11 +113,15 @@ static const ssl_cipher_table ssl_cipher_table_mac[SSL_MD_NUM_IDX] = {
+     {SSL_GOST12_512, NID_id_GostR3411_2012_512}, /* SSL_MD_GOST12_512_IDX 8 */
+     {0, NID_md5_sha1},          /* SSL_MD_MD5_SHA1_IDX 9 */
+     {0, NID_sha224},            /* SSL_MD_SHA224_IDX 10 */
+-    {0, NID_sha512}             /* SSL_MD_SHA512_IDX 11 */
++    {0, NID_sha512},             /* SSL_MD_SHA512_IDX 11 */
++    {SSL_BELTMAC, NID_belt_mac256}, /* SSL_MD_BELTMAC_IDX 12 */
++    {SSL_HBELT, NID_belt_hash}, /* SSL_MD_HBELT_IDX 13 */
++    {SSL_BASH384, NID_bash384}, /* SSL_MD_BASH384_IDX 14 */
++	{SSL_BASH512, NID_bash512} /* SSL_MD_BASH512_IDX 15 */
+ };
+ 
+ static const EVP_MD *ssl_digest_methods[SSL_MD_NUM_IDX] = {
+-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
++    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+ };
+ 
+ /* *INDENT-OFF* */
+@@ -128,7 +135,11 @@ static const ssl_cipher_table ssl_cipher_table_kx[] = {
+     {SSL_kPSK,      NID_kx_psk},
+     {SSL_kSRP,      NID_kx_srp},
+     {SSL_kGOST,     NID_kx_gost},
+-    {SSL_kANY,      NID_kx_any}
++    {SSL_kANY,      NID_kx_any},
++    {SSL_kBDHE,     NID_kxbdhe},
++    {SSL_kBDHT,     NID_kxbdht},
++    {SSL_kBDHEPSK,  NID_kxbdhe_psk},
++    {SSL_kBDHTPSK,  NID_kxbdht_psk}
+ };
+ 
+ static const ssl_cipher_table ssl_cipher_table_auth[] = {
+@@ -172,7 +183,9 @@ static int ssl_mac_pkey_id[SSL_MD_NUM_IDX] = {
+     /* GOST2012_512 */
+     EVP_PKEY_HMAC,
+     /* MD5/SHA1, SHA224, SHA512 */
+-    NID_undef, NID_undef, NID_undef
++    NID_undef, NID_undef, NID_undef,
++    /* BELTMAC BELTHASH */
++    NID_undef, NID_undef
+ };
+ 
+ static size_t ssl_mac_secret_size[SSL_MD_NUM_IDX];
+@@ -228,6 +241,10 @@ static const SSL_CIPHER cipher_aliases[] = {
+     {0, SSL_TXT_kDHEPSK, NULL, 0, SSL_kDHEPSK},
+     {0, SSL_TXT_kSRP, NULL, 0, SSL_kSRP},
+     {0, SSL_TXT_kGOST, NULL, 0, SSL_kGOST},
++    {0, SSL_TXT_kBDHE, NULL, 0, SSL_kBDHE},
++    {0, SSL_TXT_kBDHT, NULL, 0, SSL_kBDHT},
++    {0, SSL_TXT_kBDHEPSK, NULL, 0, SSL_kBDHEPSK},
++    {0, SSL_TXT_kBDHTPSK, NULL, 0, SSL_kBDHTPSK},
+ 
+     /* server authentication aliases */
+     {0, SSL_TXT_aRSA, NULL, 0, 0, SSL_aRSA},
+@@ -241,6 +258,7 @@ static const SSL_CIPHER cipher_aliases[] = {
+     {0, SSL_TXT_aGOST12, NULL, 0, 0, SSL_aGOST12},
+     {0, SSL_TXT_aGOST, NULL, 0, 0, SSL_aGOST01 | SSL_aGOST12},
+     {0, SSL_TXT_aSRP, NULL, 0, 0, SSL_aSRP},
++    {0, SSL_TXT_aBIGN, NULL, 0, SSL_aBIGN},
+ 
+     /* aliases combining key exchange and server authentication */
+     {0, SSL_TXT_EDH, NULL, 0, SSL_kDHE, ~SSL_aNULL},
+@@ -280,6 +298,8 @@ static const SSL_CIPHER cipher_aliases[] = {
+     {0, SSL_TXT_ARIA_GCM, NULL, 0, 0, 0, SSL_ARIA128GCM | SSL_ARIA256GCM},
+     {0, SSL_TXT_ARIA128, NULL, 0, 0, 0, SSL_ARIA128GCM},
+     {0, SSL_TXT_ARIA256, NULL, 0, 0, 0, SSL_ARIA256GCM},
++    {0, SSL_TXT_BELTCTR, NULL, 0, 0, 0, SSL_BELTCTR},
++    {0, SSL_TXT_BELTDWP, NULL, 0, 0, 0, SSL_BELTDWP},
+ 
+     /* MAC aliases */
+     {0, SSL_TXT_MD5, NULL, 0, 0, 0, 0, SSL_MD5},
+@@ -290,6 +310,7 @@ static const SSL_CIPHER cipher_aliases[] = {
+     {0, SSL_TXT_SHA256, NULL, 0, 0, 0, 0, SSL_SHA256},
+     {0, SSL_TXT_SHA384, NULL, 0, 0, 0, 0, SSL_SHA384},
+     {0, SSL_TXT_GOST12, NULL, 0, 0, 0, 0, SSL_GOST12_256},
++    {0, SSL_TXT_BELTMAC, NULL, 0, 0, 0, 0, SSL_BELTMAC},
+ 
+     /* protocol version aliases */
+     {0, SSL_TXT_SSLV3, NULL, 0, 0, 0, 0, 0, SSL3_VERSION},
+@@ -445,6 +466,15 @@ int ssl_load_ciphers(void)
+         (SSL_aGOST01 | SSL_aGOST12))
+         disabled_mkey_mask |= SSL_kGOST;
+ 
++    ssl_mac_pkey_id[SSL_MD_BELTMAC_IDX] = get_optional_pkey_id("belt-mac256");
++    if (ssl_mac_pkey_id[SSL_MD_BELTMAC_IDX])
++        ssl_mac_secret_size[SSL_MD_BELTMAC_IDX] = 32;
++
++    if (!get_optional_pkey_id("BIGN")){
++        disabled_auth_mask |= SSL_aBIGN;
++        disabled_mkey_mask |= SSL_kBDHE | SSL_kBDHT | SSL_kBDHEPSK | SSL_kBDHTPSK;
++    }
++
+     return 1;
+ }
+ 
+@@ -1686,6 +1716,18 @@ char *SSL_CIPHER_description(const SSL_CIPHER *cipher, char *buf, int len)
+     case SSL_kGOST:
+         kx = "GOST";
+         break;
++    case SSL_kBDHE:
++        kx = "BDHE";
++        break;
++    case SSL_kBDHT:
++        kx = "BDHT";
++        break;
++    case SSL_kBDHEPSK:
++        kx = "BDHEPSK";
++        break;
++    case SSL_kBDHTPSK:
++        kx = "BDHTPSK";
++        break;
+     case SSL_kANY:
+         kx = "any";
+         break;
+@@ -1719,6 +1761,9 @@ char *SSL_CIPHER_description(const SSL_CIPHER *cipher, char *buf, int len)
+     case (SSL_aGOST12 | SSL_aGOST01):
+         au = "GOST12";
+         break;
++    case SSL_aBIGN:
++        au = "BIGN";
++        break;
+     case SSL_aANY:
+         au = "any";
+         break;
+@@ -1792,6 +1837,12 @@ char *SSL_CIPHER_description(const SSL_CIPHER *cipher, char *buf, int len)
+     case SSL_CHACHA20POLY1305:
+         enc = "CHACHA20/POLY1305(256)";
+         break;
++    case SSL_BELTCTR:
++        enc = "BELTCTR";
++        break;
++    case SSL_BELTDWP:
++        enc = "BELTDWP";
++        break;
+     default:
+         enc = "unknown";
+         break;
+@@ -1824,6 +1875,9 @@ char *SSL_CIPHER_description(const SSL_CIPHER *cipher, char *buf, int len)
+     case SSL_GOST12_512:
+         mac = "GOST2012";
+         break;
++    case SSL_BELTMAC:
++        mac = "BELTMAC";
++        break;
+     default:
+         mac = "unknown";
+         break;
+diff --git a/ssl/ssl_init.c b/ssl/ssl_init.c
+index d083d959..d34a8e0c 100644
+--- a/ssl/ssl_init.c
++++ b/ssl/ssl_init.c
+@@ -14,6 +14,7 @@
+ #include <openssl/evp.h>
+ #include "ssl_local.h"
+ #include "internal/thread_once.h"
++#include "btls.h"
+ 
+ static int stopped;
+ 
+@@ -202,6 +203,9 @@ int OPENSSL_init_ssl(uint64_t opts, const OPENSSL_INIT_SETTINGS * settings)
+         opts |= OPENSSL_INIT_LOAD_CONFIG;
+ #endif
+ 
++    if (!btls_init())
++        return 0;
++
+     if (!OPENSSL_init_crypto(opts, settings))
+         return 0;
+ 
+diff --git a/ssl/ssl_lib.c b/ssl/ssl_lib.c
+index 98057921..4ce809a5 100644
+--- a/ssl/ssl_lib.c
++++ b/ssl/ssl_lib.c
+@@ -22,6 +22,7 @@
+ #include <openssl/ct.h>
+ #include "internal/cryptlib.h"
+ #include "internal/refcount.h"
++#include "btls.h"
+ 
+ const char SSL_version_str[] = OPENSSL_VERSION_TEXT;
+ 
+@@ -3343,6 +3344,11 @@ void ssl_set_masks(SSL *s)
+     }
+ #endif
+ 
++    if (ssl_has_cert(s, SSL_PKEY_BIGN)){
++        mask_k |= SSL_kBDHE | SSL_kBDHT | SSL_kBDHTPSK;
++        mask_a |= SSL_aBIGN;
++    }
++
+     if (rsa_enc)
+         mask_k |= SSL_kRSA;
+ 
+@@ -3396,6 +3402,10 @@ void ssl_set_masks(SSL *s)
+     mask_k |= SSL_kECDHE;
+ #endif
+ 
++#ifndef OPENSSL_NO_BDHE_PSK
++    mask_k |= SSL_kBDHEPSK;
++#endif
++
+ #ifndef OPENSSL_NO_PSK
+     mask_k |= SSL_kPSK;
+     mask_a |= SSL_aPSK;
+diff --git a/ssl/ssl_local.h b/ssl/ssl_local.h
+index 8ddbde77..de1152dc 100644
+--- a/ssl/ssl_local.h
++++ b/ssl/ssl_local.h
+@@ -34,6 +34,7 @@
+ # include "internal/dane.h"
+ # include "internal/refcount.h"
+ # include "internal/tsan_assist.h"
++# include "btls.h"
+ 
+ # ifdef OPENSSL_BUILD_SHLIBSSL
+ #  undef OPENSSL_EXTERN
+@@ -179,7 +180,7 @@
+ 
+ /* all PSK */
+ 
+-# define SSL_PSK     (SSL_kPSK | SSL_kRSAPSK | SSL_kECDHEPSK | SSL_kDHEPSK)
++# define SSL_PSK     (SSL_kPSK | SSL_kRSAPSK | SSL_kECDHEPSK | SSL_kDHEPSK | SSL_kBDHEPSK | SSL_kBDHTPSK)
+ 
+ /* Any appropriate key exchange algorithm (for TLS 1.3 ciphersuites) */
+ # define SSL_kANY                0x00000000U
+@@ -205,7 +206,7 @@
+ # define SSL_aANY                0x00000000U
+ /* All bits requiring a certificate */
+ #define SSL_aCERT \
+-    (SSL_aRSA | SSL_aDSS | SSL_aECDSA | SSL_aGOST01 | SSL_aGOST12)
++    (SSL_aRSA | SSL_aDSS | SSL_aECDSA | SSL_aGOST01 | SSL_aGOST12 | SSL_aBIGN)
+ 
+ /* Bits for algorithm_enc (symmetric encryption) */
+ # define SSL_DES                 0x00000001U
+@@ -270,7 +271,7 @@
+ # define SSL_MD_MD5_SHA1_IDX 9
+ # define SSL_MD_SHA224_IDX 10
+ # define SSL_MD_SHA512_IDX 11
+-# define SSL_MAX_DIGEST 12
++# define SSL_MAX_DIGEST 16
+ 
+ /* Bits for algorithm2 (handshake digests and other extra flags) */
+ 
+@@ -383,7 +384,7 @@
+ # define SSL_PKEY_GOST12_512     6
+ # define SSL_PKEY_ED25519        7
+ # define SSL_PKEY_ED448          8
+-# define SSL_PKEY_NUM            9
++# define SSL_PKEY_NUM            10
+ 
+ /*-
+  * SSL_kRSA <- RSA_ENC
+diff --git a/ssl/statem/extensions_clnt.c b/ssl/statem/extensions_clnt.c
+index bcce0f1d..1ffe8200 100644
+--- a/ssl/statem/extensions_clnt.c
++++ b/ssl/statem/extensions_clnt.c
+@@ -130,7 +130,7 @@ static int use_ecc(SSL *s)
+ 
+         alg_k = c->algorithm_mkey;
+         alg_a = c->algorithm_auth;
+-        if ((alg_k & (SSL_kECDHE | SSL_kECDHEPSK))
++        if ((alg_k & (SSL_kECDHE | SSL_kECDHEPSK | SSL_kBDHEPSK))
+                 || (alg_a & SSL_aECDSA)
+                 || c->min_tls >= TLS1_3_VERSION) {
+             ret = 1;
+diff --git a/ssl/statem/extensions_srvr.c b/ssl/statem/extensions_srvr.c
+index 3c7395c0..a02a0ba2 100644
+--- a/ssl/statem/extensions_srvr.c
++++ b/ssl/statem/extensions_srvr.c
+@@ -1623,7 +1623,8 @@ EXT_RETURN tls_construct_stoc_etm(SSL *s, WPACKET *pkt, unsigned int context,
+     if (s->s3->tmp.new_cipher->algorithm_mac == SSL_AEAD
+         || s->s3->tmp.new_cipher->algorithm_enc == SSL_RC4
+         || s->s3->tmp.new_cipher->algorithm_enc == SSL_eGOST2814789CNT
+-        || s->s3->tmp.new_cipher->algorithm_enc == SSL_eGOST2814789CNT12) {
++        || s->s3->tmp.new_cipher->algorithm_enc == SSL_eGOST2814789CNT12
++        || s->s3->tmp.new_cipher->algorithm_enc == SSL_BELTCTR) {
+         s->ext.use_etm = 0;
+         return EXT_RETURN_NOT_SENT;
+     }
+diff --git a/ssl/statem/statem_clnt.c b/ssl/statem/statem_clnt.c
+index 3420ce65..22a44781 100644
+--- a/ssl/statem/statem_clnt.c
++++ b/ssl/statem/statem_clnt.c
+@@ -66,7 +66,7 @@ static int key_exchange_expected(SSL *s)
+      * ciphersuite or for SRP
+      */
+     if (alg_k & (SSL_kDHE | SSL_kECDHE | SSL_kDHEPSK | SSL_kECDHEPSK
+-                 | SSL_kSRP)) {
++                 | SSL_kSRP | SSL_kBDHE | SSL_kBDHEPSK | SSL_kBDHTPSK)) {
+         return 1;
+     }
+ 
+@@ -2277,7 +2277,7 @@ MSG_PROCESS_RETURN tls_process_key_exchange(SSL *s, PACKET *pkt)
+     }
+ 
+     /* Nothing else to do for plain PSK or RSAPSK */
+-    if (alg_k & (SSL_kPSK | SSL_kRSAPSK)) {
++    if (alg_k & (SSL_kPSK | SSL_kRSAPSK | SSL_kBDHTPSK)) {
+     } else if (alg_k & SSL_kSRP) {
+         if (!tls_process_ske_srp(s, pkt, &pkey)) {
+             /* SSLfatal() already called */
+@@ -2293,6 +2293,16 @@ MSG_PROCESS_RETURN tls_process_key_exchange(SSL *s, PACKET *pkt)
+             /* SSLfatal() already called */
+             goto err;
+         }
++    } else if (alg_k & (SSL_kBDHE)) {
++        if (!btls_process_ske_bign_dhe(s, pkt, &pkey)) {
++            /* SSLfatal() already called */
++            goto err;
++        }
++    } else if (alg_k & SSL_kBDHEPSK) {
++        if (!btls_process_ske_psk_bign_dhe(s, pkt, &pkey)) {
++            /* SSLfatal() already called */
++            goto err;
++        }
+     } else if (alg_k) {
+         SSLfatal(s, SSL_AD_UNEXPECTED_MESSAGE, SSL_F_TLS_PROCESS_KEY_EXCHANGE,
+                  SSL_R_UNEXPECTED_MESSAGE);
+@@ -3341,6 +3351,12 @@ int tls_construct_client_key_exchange(SSL *s, WPACKET *pkt)
+     } else if (alg_k & SSL_kSRP) {
+         if (!tls_construct_cke_srp(s, pkt))
+             goto err;
++    } else if (alg_k & (SSL_kBDHE | SSL_kBDHEPSK)) {
++        if (!tls_construct_cke_ecdhe(s, pkt))
++            goto err;
++    } else if (alg_k & (SSL_kBDHT | SSL_kBDHTPSK)) {
++        if (!btls_construct_cke_bign_dht(s, pkt))
++            goto err;
+     } else if (!(alg_k & SSL_kPSK)) {
+         SSLfatal(s, SSL_AD_INTERNAL_ERROR,
+                  SSL_F_TLS_CONSTRUCT_CLIENT_KEY_EXCHANGE, ERR_R_INTERNAL_ERROR);
+@@ -3621,7 +3637,11 @@ int ssl3_check_cert_and_algorithm(SSL *s)
+         return 0;
+     }
+ #endif
+-
++    if ((alg_k & SSL_kBDHE) && (s->s3->peer_tmp == NULL)) {
++        SSLfatal(s, SSL_AD_INTERNAL_ERROR, SSL_F_SSL3_CHECK_CERT_AND_ALGORITHM,
++                 ERR_R_INTERNAL_ERROR);
++        return 0;
++    }
+     return 1;
+ }
+ 
+diff --git a/ssl/statem/statem_srvr.c b/ssl/statem/statem_srvr.c
+index cf45a40c..89b1ec42 100644
+--- a/ssl/statem/statem_srvr.c
++++ b/ssl/statem/statem_srvr.c
+@@ -339,16 +339,17 @@ static int send_server_key_exchange(SSL *s)
+          * provided
+          */
+ #ifndef OPENSSL_NO_PSK
+-        /* Only send SKE if we have identity hint for plain PSK */
+-        || ((alg_k & (SSL_kPSK | SSL_kRSAPSK))
++        /* Only send SKE if we have identity hint for plain PSK or BDHTPSK */
++        || ((alg_k & (SSL_kPSK | SSL_kRSAPSK | SSL_kBDHTPSK))
+             && s->cert->psk_identity_hint)
+         /* For other PSK always send SKE */
+-        || (alg_k & (SSL_PSK & (SSL_kDHEPSK | SSL_kECDHEPSK)))
++        || (alg_k & (SSL_PSK & (SSL_kDHEPSK | SSL_kECDHEPSK | SSL_kBDHEPSK)))
+ #endif
+ #ifndef OPENSSL_NO_SRP
+         /* SRP: send ServerKeyExchange */
+         || (alg_k & SSL_kSRP)
+ #endif
++        || (alg_k & SSL_kBDHE)
+         ) {
+         return 1;
+     }
+@@ -2519,7 +2520,7 @@ int tls_construct_server_key_exchange(SSL *s, WPACKET *pkt)
+     r[0] = r[1] = r[2] = r[3] = NULL;
+ #ifndef OPENSSL_NO_PSK
+     /* Plain PSK or RSAPSK nothing to do */
+-    if (type & (SSL_kPSK | SSL_kRSAPSK)) {
++    if (type & (SSL_kPSK | SSL_kRSAPSK | SSL_kBDHTPSK)) {
+     } else
+ #endif                          /* !OPENSSL_NO_PSK */
+ #ifndef OPENSSL_NO_DH
+@@ -2640,6 +2641,14 @@ int tls_construct_server_key_exchange(SSL *s, WPACKET *pkt)
+         r[3] = NULL;
+     } else
+ #endif                          /* !OPENSSL_NO_EC */
++    if (type & (SSL_kBDHE)) {
++        if(!btls_construct_ske_bign_dhe(s, pkt))
++            goto err;
++    } else
++    if (type & SSL_kBDHEPSK) {
++        if(!btls_construct_ske_psk_bign_dhe(s, pkt))
++            goto err;
++    } else
+ #ifndef OPENSSL_NO_SRP
+     if (type & SSL_kSRP) {
+         if ((s->srp_ctx.N == NULL) ||
+@@ -2673,7 +2682,7 @@ int tls_construct_server_key_exchange(SSL *s, WPACKET *pkt)
+     }
+ 
+ #ifndef OPENSSL_NO_PSK
+-    if (type & SSL_PSK) {
++    if ((type & SSL_PSK) && (s->s3->tmp.new_cipher->algorithm_mkey != SSL_kBDHEPSK)) {
+         size_t len = (s->cert->psk_identity_hint == NULL)
+                         ? 0 : strlen(s->cert->psk_identity_hint);
+ 
+@@ -3496,6 +3505,16 @@ MSG_PROCESS_RETURN tls_process_client_key_exchange(SSL *s, PACKET *pkt)
+             /* SSLfatal() already called */
+             goto err;
+         }
++    } else if (alg_k & (SSL_kBDHE | SSL_kBDHEPSK)) {
++        if (!tls_process_cke_ecdhe(s, pkt)) {
++            /* SSLfatal() already called */
++            goto err;
++        }
++    } else if (alg_k & (SSL_kBDHT | SSL_kBDHTPSK)) {
++        if (!btls_process_cke_bign_dht(s, pkt)) {
++            /* SSLfatal() already called */
++            goto err;
++        }
+     } else {
+         SSLfatal(s, SSL_AD_INTERNAL_ERROR,
+                  SSL_F_TLS_PROCESS_CLIENT_KEY_EXCHANGE,
+diff --git a/ssl/t1_lib.c b/ssl/t1_lib.c
+index 48d46f8a..71f861c0 100644
+--- a/ssl/t1_lib.c
++++ b/ssl/t1_lib.c
+@@ -20,6 +20,7 @@
+ #include "internal/nelem.h"
+ #include "ssl_local.h"
+ #include <openssl/ct.h>
++#include "btls.h"
+ 
+ static const SIGALG_LOOKUP *find_sig_alg(SSL *s, X509 *x, EVP_PKEY *pkey);
+ static int tls12_sigalg_allowed(const SSL *s, int op, const SIGALG_LOOKUP *lu);
+@@ -169,6 +170,9 @@ static const TLS_GROUP_INFO nid_list[] = {
+     {NID_brainpoolP512r1, 256, TLS_CURVE_PRIME}, /* brainpool512r1 (28) */
+     {EVP_PKEY_X25519, 128, TLS_CURVE_CUSTOM}, /* X25519 (29) */
+     {EVP_PKEY_X448, 224, TLS_CURVE_CUSTOM}, /* X448 (30) */
++    {NID_bign_curve256v1, 128, TLS_CURVE_CUSTOM}, /* BIGN_CURVE256V1_ID (31) */
++    {NID_bign_curve384v1, 192, TLS_CURVE_CUSTOM}, /* BIGN_CURVE384V1_ID (32) */
++    {NID_bign_curve512v1, 256, TLS_CURVE_CUSTOM}, /* BIGN_CURVE512V1_ID (33) */
+ };
+ 
+ static const unsigned char ecformats_default[] = {
+@@ -674,6 +678,9 @@ static const uint16_t tls12_sigalgs[] = {
+     TLSEXT_SIGALG_gostr34102012_512_gostr34112012_512,
+     TLSEXT_SIGALG_gostr34102001_gostr3411,
+ #endif
++    TLSEXT_SIGALG_bign_sign_128,
++    TLSEXT_SIGALG_bign_sign_192,
++    TLSEXT_SIGALG_bign_sign_256
+ };
+ 
+ #ifndef OPENSSL_NO_EC
+@@ -769,8 +776,20 @@ static const SIGALG_LOOKUP sigalg_lookup_tbl[] = {
+     {NULL, TLSEXT_SIGALG_gostr34102001_gostr3411,
+      NID_id_GostR3411_94, SSL_MD_GOST94_IDX,
+      NID_id_GostR3410_2001, SSL_PKEY_GOST01,
+-     NID_undef, NID_undef}
++     NID_undef, NID_undef},
+ #endif
++    {NULL, TLSEXT_SIGALG_bign_sign_128,
++     NID_belt_hash, SSL_MD_HBELT_IDX,
++     NID_bign_pubkey, SSL_PKEY_BIGN,
++     NID_bign_with_hbelt, NID_bign_curve256v1},
++    {NULL, TLSEXT_SIGALG_bign_sign_192,
++     NID_bash384, SSL_MD_BASH384_IDX,
++     NID_bign_pubkey, SSL_PKEY_BIGN,
++     NID_bign_with_bash384, NID_bign_curve384v1},
++    {NULL, TLSEXT_SIGALG_bign_sign_256,
++     NID_bash512, SSL_MD_BASH512_IDX,
++     NID_bign_pubkey, SSL_PKEY_BIGN,
++     NID_bign_with_bash512, NID_bign_curve512v1},
+ };
+ /* Legacy sigalgs for TLS < 1.2 RSA TLS signatures */
+ static const SIGALG_LOOKUP legacy_rsa_sigalg = {
+@@ -2428,6 +2447,7 @@ void tls1_set_cert_validity(SSL *s)
+     tls1_check_chain(s, NULL, NULL, NULL, SSL_PKEY_GOST12_512);
+     tls1_check_chain(s, NULL, NULL, NULL, SSL_PKEY_ED25519);
+     tls1_check_chain(s, NULL, NULL, NULL, SSL_PKEY_ED448);
++    tls1_check_chain(s, NULL, NULL, NULL, SSL_PKEY_BIGN);
+ }
+ 
+ /* User level utility function to check a chain is suitable */
+diff --git a/ssl/t1_trce.c b/ssl/t1_trce.c
+index e2c397b7..08f80f8d 100644
+--- a/ssl/t1_trce.c
++++ b/ssl/t1_trce.c
+@@ -443,6 +443,14 @@ static const ssl_trace_tbl ssl_ciphers_tbl[] = {
+     {0xFEFF, "SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA"},
+     {0xFF85, "GOST2012-GOST8912-GOST8912"},
+     {0xFF87, "GOST2012-NULL-GOST12"},
++    {0xFF15, "BDHE-BIGN_WITH-BELT-CTR-MAC-HBELT"},
++    {0xFF16, "BDHE-BIGN_WITH-BELT-DWP-HBELT"},
++    {0xFF17, "BDHT-BIGN_WITH-BELT-CTR-MAC-HBELT"},
++    {0xFF18, "BDHT-BIGN_WITH-BELT-DWP-HBELT"},
++    {0xFF19, "BDHE-PSK-BIGN_WITH-BELT-CTR-MAC-HBELT"},
++    {0xFF1A, "BDHE-PSK-BIGN_WITH-BELT-DWP-HBELT"},
++    {0xFF1B, "BDHT-PSK-BIGN_WITH-BELT-CTR-MAC-HBELT"},
++    {0xFF1C, "BDHT-PSK-BIGN_WITH-BELT-DWP-HBELT"},
+ };
+ 
+ /* Compression methods */
+@@ -572,6 +580,9 @@ static const ssl_trace_tbl ssl_sigalg_tbl[] = {
+     {TLSEXT_SIGALG_gostr34102012_256_gostr34112012_256, "gost2012_256"},
+     {TLSEXT_SIGALG_gostr34102012_512_gostr34112012_512, "gost2012_512"},
+     {TLSEXT_SIGALG_gostr34102001_gostr3411, "gost2001_gost94"},
++	{TLSEXT_SIGALG_bign_sign_128, "bign_auth128"},
++	{TLSEXT_SIGALG_bign_sign_192, "bign_auth192"},
++	{TLSEXT_SIGALG_bign_sign_256, "bign_auth256"},
+ };
+ 
+ static const ssl_trace_tbl ssl_ctype_tbl[] = {
