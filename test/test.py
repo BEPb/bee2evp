@@ -32,17 +32,16 @@ def test_result(test_name, retcode):
 		print_colored('fail', bcolors.FAIL)
 		fail = True
 
-# def test_version():
-# 	retcode, out, __ = openssl('version')
-# 	test_result('version', retcode)
-# 	print(out.decode())
 def test_version():
-	retcode, out, err = openssl('version')
-
-	print("Return code: {}".format(retcode))
-	print("Output: {}".format(out.decode()))
-	print("Error output: {}".format(err.decode()))
-	assert retcode == 0, "OpenSSL returned non-zero exit status {}. Error message: {}".format(retcode, err.decode())
+	retcode, out, __ = openssl('version')
+	test_result('version', retcode)
+	print(out.decode())
+# def test_version():
+# 	retcode, out, err = openssl('version')
+# 	print("Return code: {}".format(retcode))
+# 	print("Output: {}".format(out.decode()))
+# 	print("Error output: {}".format(err.decode()))
+# 	assert retcode == 0, "OpenSSL returned non-zero exit status {}. Error message: {}".format(retcode, err.decode())
 
 def test_engine():
 	retcode, out, er__ = openssl('engine -c -t bee2evp')
