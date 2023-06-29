@@ -38,9 +38,8 @@ def test_result(test_name, retcode):
 # 	print(out.decode())
 def test_version():
 	# retcode, out, err = openssl('version')
-	retcode, out, err = subprocess.Popen(['/usr/bin/openssl', 'version'],
-										 stdout=subprocess.PIPE,
-										 stderr=subprocess.PIPE).communicate()
+	retcode, out, err = subprocess.Popen(['/usr/bin/openssl', 'version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+
 	print("Return code: {}".format(retcode))
 	print("Output: {}".format(out.decode()))
 	print("Error output: {}".format(err.decode()))
