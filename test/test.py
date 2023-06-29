@@ -32,10 +32,16 @@ def test_result(test_name, retcode):
 		print_colored('fail', bcolors.FAIL)
 		fail = True
 
+# def test_version():
+# 	retcode, out, __ = openssl('version')
+# 	test_result('version', retcode)
+# 	print(out.decode())
 def test_version():
-	retcode, out, __ = openssl('version')
-	test_result('version', retcode)
-	print(out.decode())
+    retcode, out, err = openssl('version')
+    print(f"Return code: {retcode}")
+    print(f"Output: {out.decode()}")
+    print(f"Error output: {err.decode()}")
+    assert retcode == 0, f"OpenSSL returned non-zero exit status {retcode}. Error message: {err.decode()}"
 
 def test_engine():
 	retcode, out, er__ = openssl('engine -c -t bee2evp')
@@ -60,7 +66,7 @@ def test_belt():
 	block = beltBlockDecr(bytes(block), bytes(key))
 	res = hex_encoder(block)[0].decode() == '0dc5300600cab840b38448e5e993f421'
 	test_result('Block Decrypt', res)
-	
+
 	#ECB (|X| = 384)
 	#A.6 Encrypt
 	src = hex_decoder('b194bac80a08f53b366d008e584a5de4'
@@ -75,7 +81,7 @@ def test_belt():
 		'46fb2ed2ce771f26dcb5e5d1569f9ab0')
 	test_result('ECB Encrypt', res)
 
-	#A.8 Decrypt	
+	#A.8 Decrypt
 	src = hex_decoder('e12bdc1ae28257ec703fccf095ee8df1'
 					  'c1ab76389fe678caf7c6f860d5bb9c4f'
 					  'f33c657b637c306add4ea7799eb23d31')[0]
@@ -298,7 +304,7 @@ def test_bign():
 	prkey384 = os.path.join(tmpdirname, 'prkey384v1.pem')
 	bignGenKeypair(params384, prkey384)
 	out = openssl('asn1parse -in {}'.format(prkey384))
-	res = (out[1].decode().find('bign-curve384v1') != -1 & 
+	res = (out[1].decode().find('bign-curve384v1') != -1 &
 		out[1].decode().find('bign-pubkey') != -1)
 	test_result('Gen private key bign-curve384v1', res)
 
@@ -306,7 +312,7 @@ def test_bign():
 	prkey512 = os.path.join(tmpdirname, 'prkey512v1.pem')
 	bignGenKeypair(params512, prkey512)
 	out = openssl('asn1parse -in {}'.format(prkey512))
-	res = (out[1].decode().find('bign-curve512v1') != -1 & 
+	res = (out[1].decode().find('bign-curve512v1') != -1 &
 		out[1].decode().find('bign-pubkey') != -1)
 	test_result('Gen private key bign-curve512v1', res)
 
@@ -314,7 +320,7 @@ def test_bign():
 	pubkey256 = os.path.join(tmpdirname, 'pubkey256v1.pem')
 	bignCalcPubkey(prkey256, pubkey256)
 	out = openssl('asn1parse -in {}'.format(pubkey256))
-	res = (out[1].decode().find('bign-curve256v1') != -1 & 
+	res = (out[1].decode().find('bign-curve256v1') != -1 &
 		out[1].decode().find('bign-pubkey') != -1)
 	test_result('Calc public key bign-curve256v1', res)
 
@@ -339,7 +345,7 @@ def test_bign():
 	pubkey384 = os.path.join(tmpdirname, 'pubkey384v1.pem')
 	bignCalcPubkey(prkey384, pubkey384)
 	out = openssl('asn1parse -in {}'.format(pubkey384))
-	res = (out[1].decode().find('bign-curve384v1') != -1 & 
+	res = (out[1].decode().find('bign-curve384v1') != -1 &
 		out[1].decode().find('bign-pubkey') != -1)
 	test_result('Calc public key bign-curve384v1', res)
 
@@ -347,7 +353,7 @@ def test_bign():
 	pubkey512 = os.path.join(tmpdirname, 'pubkey512v1.pem')
 	bignCalcPubkey(prkey512, pubkey512)
 	out = openssl('asn1parse -in {}'.format(pubkey512))
-	res = (out[1].decode().find('bign-curve512v1') != -1 & 
+	res = (out[1].decode().find('bign-curve512v1') != -1 &
 		out[1].decode().find('bign-pubkey') != -1)
 	test_result('Calc public key bign-curve512v1', res)
 
@@ -384,7 +390,7 @@ def test_belt_kwp_dwp():
 		' -pkeyopt enc_params:specified -pkeyopt enc_params:cofactor -out')
 	openssl('{} {}'.format(cmd, params256))
 
-	kwp128 = os.path.join(tmpdirname, 'kwp128.pem') 
+	kwp128 = os.path.join(tmpdirname, 'kwp128.pem')
 	retcode, out, er__ = openssl(
 		'genpkey -paramfile {} -belt-kwp128 -pass pass:root -out {}'
 		.format(params256, kwp128))
@@ -394,7 +400,7 @@ def test_belt_kwp_dwp():
 	retcode = (out.find('valid') != -1)
 	test_result('belt-kwp128', retcode)
 
-	kwp192 = os.path.join(tmpdirname, 'kwp192.pem') 
+	kwp192 = os.path.join(tmpdirname, 'kwp192.pem')
 	retcode, out, er__ = openssl(
 		'genpkey -paramfile {} -belt-kwp192 -pass pass:root -out {}'
 		.format(params256, kwp192))
@@ -404,7 +410,7 @@ def test_belt_kwp_dwp():
 	retcode = (out.find('valid') != -1)
 	test_result('belt-kwp192', retcode)
 
-	kwp256 = os.path.join(tmpdirname, 'kwp256.pem') 
+	kwp256 = os.path.join(tmpdirname, 'kwp256.pem')
 	retcode, out, er__ = openssl(
 		'genpkey -paramfile {} -belt-kwp256 -pass pass:root -out {}'
 		.format(params256, kwp256))
@@ -414,7 +420,7 @@ def test_belt_kwp_dwp():
 	retcode = (out.find('valid') != -1)
 	test_result('belt-kwp256', retcode)
 
-	dwp128 = os.path.join(tmpdirname, 'dwp128.pem') 
+	dwp128 = os.path.join(tmpdirname, 'dwp128.pem')
 	retcode, out, er__ = openssl(
 		'genpkey -paramfile {} -belt-dwp128 -pass pass:root -out {}'
 		.format(params256, dwp128))
@@ -424,7 +430,7 @@ def test_belt_kwp_dwp():
 	retcode = (out.find('valid') != -1)
 	test_result('belt-dwp128', retcode)
 
-	dwp192 = os.path.join(tmpdirname, 'dwp192.pem') 
+	dwp192 = os.path.join(tmpdirname, 'dwp192.pem')
 	retcode, out, er__ = openssl(
 		'genpkey -paramfile {} -belt-dwp192 -pass pass:root -out {}'
 		.format(params256, dwp192))
@@ -434,7 +440,7 @@ def test_belt_kwp_dwp():
 	retcode = (out.find('valid') != -1)
 	test_result('belt-dwp192', retcode)
 
-	dwp256 = os.path.join(tmpdirname, 'dwp256.pem') 
+	dwp256 = os.path.join(tmpdirname, 'dwp256.pem')
 	retcode, out, er__ = openssl(
 		'genpkey -paramfile {} -belt-dwp256 -pass pass:root -out {}'
 		.format(params256, dwp256))
@@ -507,7 +513,7 @@ def btls_issue_cert(privfile, certfile):
 		else:
 			cmd = ('s_server -key {} -cert {} -tls1_2 >> {}'
 					.format(priv, cert, server_log_file))
-	
+
 	global server
 	server = openssl(cmd, type_=1)'''
 
@@ -564,7 +570,7 @@ def test_btls():
 
 	# curves list for test BDHEPSK
 	curves_list_bdhepsk = ['NULL', 'bign-curve256v1', 'bign-curve384v1', 'bign-curve512v1',
-					'bign-curve256v1:bign-curve384v1:bign-curve512v1', 
+					'bign-curve256v1:bign-curve384v1:bign-curve512v1',
 					'bign-curve256v1:bign-curve512v1']
 
 	# curves list for test BDHE and BDHTPSK
@@ -579,11 +585,11 @@ def test_btls():
 
 	# test NO_PSK ciphersuites
 	for curve in curves_list:
-		s_nopsk = threading.Thread(target=btls_server_cert, 
+		s_nopsk = threading.Thread(target=btls_server_cert,
 						args=(tmpdirname, server_log_file, curve))
 		s_nopsk.run()
 		time.sleep(1)
-		c_nopsk = threading.Thread(target=btls_client_cert, 
+		c_nopsk = threading.Thread(target=btls_client_cert,
 						args=(client_log_file, curve, noPSK_cipherssuites))
 		c_nopsk.run()
 
@@ -593,11 +599,11 @@ def test_btls():
 
 	# test BDHTPSK ciphersuites
 	for curve in curves_list:
-		s_dhtpsk = threading.Thread(target=btls_server_cert, 
+		s_dhtpsk = threading.Thread(target=btls_server_cert,
 						args=(tmpdirname, server_log_file, curve, True))
 		s_dhtpsk.run()
 		time.sleep(1)
-		c_dhtpsk = threading.Thread(target=btls_client_cert, 
+		c_dhtpsk = threading.Thread(target=btls_client_cert,
 						args=(client_log_file, curve, bdhtPSK_ciphersuites, True))
 		c_dhtpsk.run()
 
@@ -606,11 +612,11 @@ def test_btls():
 	print('End BDHTPSK')
 
 	# test BDHEPSK ciphersuites
-	s_dhepsk = threading.Thread(target=btls_server_nocert, 
+	s_dhepsk = threading.Thread(target=btls_server_nocert,
 					args=(server_log_file,))
 	s_dhepsk.run()
 	time.sleep(1)
-	c_dhepsk = threading.Thread(target=btls_client_nocert, 
+	c_dhepsk = threading.Thread(target=btls_client_nocert,
 					args=(client_log_file, curves_list_bdhepsk, bdhePSK_ciphersuites))
 	c_dhepsk.run()
 
