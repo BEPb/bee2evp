@@ -37,11 +37,11 @@ def test_result(test_name, retcode):
 # 	test_result('version', retcode)
 # 	print(out.decode())
 def test_version():
-    retcode, out, err = openssl('version')
-    print(f"Return code: {retcode}")
-    print(f"Output: {out.decode()}")
-    print(f"Error output: {err.decode()}")
-    assert retcode == 0, f"OpenSSL returned non-zero exit status {retcode}. Error message: {err.decode()}"
+	retcode, out, err = openssl('version')
+	print(f"Return code: {retcode}")
+	print(f"Output: {out.decode()}")
+	print(f"Error output: {err.decode()}")
+	assert retcode == 0, f"OpenSSL returned non-zero exit status {retcode}. Error message: {err.decode()}"
 
 def test_engine():
 	retcode, out, er__ = openssl('engine -c -t bee2evp')
