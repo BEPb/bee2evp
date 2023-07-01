@@ -32,6 +32,8 @@ def openssl(cmd, prefix='', echo=False, type_=0):
 	if echo:
 		print(cmd)
 	logging.debug('cmd OpenSSL: %s', cmd)
+	logging.debug("arguments OpenSSL: %s", cmd.split("|"))
+
 	if (type_ == 0):
 		p = subprocess.Popen(cmd,
 						stdout=subprocess.PIPE,
