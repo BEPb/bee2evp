@@ -58,7 +58,7 @@ def beltECBDecr(src, key):
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
 	cmd = 'enc -d -belt-ecb{} -nosalt -nopad -K {}'.format(key_bitlen, key)
 	retcode, dest, er__ = openssl(cmd, prefix)
-	return dest	
+	return dest
 
 def beltCBCEncr(src, key, iv):
 	assert (len(src) * 8) % 128 == 0
@@ -148,7 +148,7 @@ def beltMAC(src, key):
 	plain = b64_encoder(src)[0].decode()
 	key = hex_encoder(key)[0].decode()
 	key_bitlen = len(key)*4
-	
+
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
 	cmd = 'dgst -mac belt-mac{} -macopt hexkey:{}'.format(key_bitlen, key)
 	retcode, out, er__ = openssl(cmd, prefix)
@@ -156,11 +156,33 @@ def beltMAC(src, key):
 	mac = mac.strip()
 	return bytes(hex_decoder(mac)[0])
 
+''' для отладки
+def beltMAC(src, key):
+    plain = b64_encoder(src)[0].decode()
+    key = hex_encoder(key)[0].decode()
+    key_bitlen = len(key)*4
+
+    prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
+    cmd = 'dgst -mac belt-mac{} -macopt hexkey:{}'.format(key_bitlen, key)
+    retcode, out, er__ = openssl(cmd, prefix)
+    print('retcode:', retcode)
+    print('stdout:', out)
+    print('stderr:', er__)
+
+    try:
+        mac = out.decode().split(' ')[1][:-1]
+        mac = mac.strip()
+        return bytes(hex_decoder(mac)[0])
+    except:
+        print('error:', traceback.format_exc())
+        return None
+'''
+
 def beltHMAC(src, key):
 	plain = b64_encoder(src)[0].decode()
 	key = hex_encoder(key)[0].decode()
 	key_bitlen = len(key)*4
-	
+
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
 	cmd = 'dgst -mac belt-hmac -macopt hexkey:{}'.format(256, key)
 	retcode, out, er__ = openssl(cmd, prefix)
