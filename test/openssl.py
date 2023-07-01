@@ -20,7 +20,8 @@ home = expanduser("~")
 # OPENSSL_EXE_PATH = home + '/usr/local/bin/openssl'
 
 os.environ['OPENSSL_CONF'] = '/usr/lib/ssl/openssl.cnf'
-OPENSSL_EXE_PATH = '/usr/bin/openssl'
+# OPENSSL_EXE_PATH = '/usr/bin/openssl'
+OPENSSL_EXE_PATH = '/usr/local/bin/openssl'
 def openssl(cmd, prefix='', echo=False, type_=0):
 	cmd = '{} {} {}'.format(prefix, OPENSSL_EXE_PATH, cmd)
 	if echo:
