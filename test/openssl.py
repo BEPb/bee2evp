@@ -28,7 +28,6 @@ logging.basicConfig(filename='openssl.log', level=logging.DEBUG,
                     format='%(asctime)s [%(levelname)s] %(message)s')
 
 def openssl(cmd, prefix='', echo=False, type_=0):
-def openssl(cmd, prefix='', echo=False, type_=0):
 	cmd = '{} {} {}'.format(prefix, OPENSSL_EXE_PATH, cmd)
 	if echo:
 		print(cmd)
