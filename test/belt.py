@@ -7,7 +7,7 @@
 # \copyright The Bee2evp authors
 # \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 # *****************************************************************************
-
+import traceback
 from openssl import openssl
 from settings import hex_encoder, b64_encoder, hex_decoder, b64_decoder
 
@@ -144,19 +144,20 @@ def beltCTRDecr(src, key, iv):
 	retcode, dest, er__ = openssl(cmd, prefix, True)
 	return dest
 
-def beltMAC(src, key):
-	plain = b64_encoder(src)[0].decode()
-	key = hex_encoder(key)[0].decode()
-	key_bitlen = len(key)*4
+# def beltMAC(src, key):
+# 	plain = b64_encoder(src)[0].decode()
+# 	key = hex_encoder(key)[0].decode()
+# 	key_bitlen = len(key)*4
+#
+# 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
+# 	cmd = 'dgst -mac belt-mac{} -macopt hexkey:{}'.format(key_bitlen, key)
+# 	retcode, out, er__ = openssl(cmd, prefix)
+# 	mac = out.decode().split(' ')[1][:-1]
+# 	mac = mac.strip()
+# 	return bytes(hex_decoder(mac)[0])
 
-	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'dgst -mac belt-mac{} -macopt hexkey:{}'.format(key_bitlen, key)
-	retcode, out, er__ = openssl(cmd, prefix)
-	mac = out.decode().split(' ')[1][:-1]
-	mac = mac.strip()
-	return bytes(hex_decoder(mac)[0])
 
-''' для отладки
+# для отладки
 def beltMAC(src, key):
     plain = b64_encoder(src)[0].decode()
     key = hex_encoder(key)[0].decode()
@@ -176,7 +177,7 @@ def beltMAC(src, key):
     except:
         print('error:', traceback.format_exc())
         return None
-'''
+
 
 def beltHMAC(src, key):
 	plain = b64_encoder(src)[0].decode()
