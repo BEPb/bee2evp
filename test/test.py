@@ -175,10 +175,6 @@ def test_belt():
 	key = hex_decoder('e9dee72c8f0c0fa62ddb49f46f739647'
 					  '06075316ed247a3739cba38303a98bf6')[0]
 	mac = beltMAC(bytes(src), bytes(key))
-	print('mac :', mac)
-	print('hex_encoder(mac)[0].decode() :', hex_encoder(mac)[0].decode())
-	print('2dab59771b4b16d0')
-	print('res :', res)
 	res = hex_encoder(mac)[0].decode() == '2dab59771b4b16d0'
 
 	test_result('MAC-256', res)
