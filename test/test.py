@@ -647,6 +647,6 @@ if __name__ == '__main__':
 	test_belt()
 	test_bign()
 	test_belt_kwp_dwp()
-	# test_btls()
+	test_btls()
 	if (fail == True):
 		sys.exit(1)
