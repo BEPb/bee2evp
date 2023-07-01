@@ -156,8 +156,6 @@ def beltCTRDecr(src, key, iv):
 # 	mac = mac.strip()
 # 	return bytes(hex_decoder(mac)[0])
 
-
-# для отладки
 def beltMAC(src, key):
     plain = b64_encoder(src)[0].decode()
     key = hex_encoder(key)[0].decode()
