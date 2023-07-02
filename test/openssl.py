@@ -20,8 +20,7 @@ home = expanduser("~")
 # os.environ['OPENSSL_CONF'] = home + '/usr/local/openssl.cnf'
 # OPENSSL_EXE_PATH = home + '/usr/local/bin/openssl'
 
-os.environ['OPENSSL_CONF'] = '/usr/lib/ssl/openssl.cnf'
-# OPENSSL_EXE_PATH = '/usr/bin/openssl'
+os.environ['OPENSSL_CONF'] = '/usr/local/lib/openssl.cnf'
 OPENSSL_EXE_PATH = '/usr/local/bin/openssl'
 
 logging.basicConfig(filename='openssl.log', level=logging.DEBUG,
