@@ -40,6 +40,7 @@ def beltBlockEncr(block, key):
 
 fail = False
 def test_result(test_name, retcode):
+	global fail
 	if(retcode == 1):
 		sys.stdout.write(test_name + ': ')
 		print_colored('success', bcolors.OKGREEN)

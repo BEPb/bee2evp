@@ -1,4 +1,3 @@
-
 # *****************************************************************************
 # \file openssl.py
 # \project bee2evp [EVP-interfaces over bee2 / engine of OpenSSL]
@@ -22,9 +21,6 @@ home = expanduser("~")
 
 os.environ['OPENSSL_CONF'] = '/usr/local/lib/openssl.cnf'
 OPENSSL_EXE_PATH = '/usr/local/bin/openssl'
-
-# os.environ['OPENSSL_CONF'] = '/usr/lib/ssl/openssl.cnf'
-# OPENSSL_EXE_PATH = '/usr/bin/openssl'
 
 logging.basicConfig(filename='openssl.log', level=logging.DEBUG,
                     format='%(asctime)s [%(levelname)s] %(message)s')
