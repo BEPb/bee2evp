@@ -29,7 +29,7 @@ def beltBlockEncr(block, key):
 	print('key_bitlen', key_bitlen)
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'enc -e -belt-ecb{} -nosalt -nopad -e -K {}'.format(key_bitlen, key)
+	cmd = 'enc -e -engine bee2evp -belt-ecb{} -nosalt -nopad -e -K {}'.format(key_bitlen, key)
 	print('prefix - ', prefix)
 	print('cmd - ', cmd)
 	retcode, block, er__ = openssl(cmd, prefix)

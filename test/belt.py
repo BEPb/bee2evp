@@ -19,7 +19,7 @@ def beltBlockEncr(block, key):
 	key_bitlen = len(key) * 4
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'enc -e -belt-ecb{} -nosalt -nopad -e -K {}'.format(key_bitlen, key)
+	cmd = 'enc -e -engine bee2evp -belt-ecb{} -nosalt -nopad -e -K {}'.format(key_bitlen, key)
 	retcode, block, er__ = openssl(cmd, prefix)
 	return block
 
@@ -32,7 +32,7 @@ def beltBlockDecr(block, key):
 	key_bitlen = len(key) * 4
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'enc -d -belt-ecb{} -nosalt -nopad -K {}'.format(key_bitlen, key)
+	cmd = 'enc -d -engine bee2evp -belt-ecb{} -nosalt -nopad -K {}'.format(key_bitlen, key)
 	retcode, block, er__ = openssl(cmd, prefix)
 	return block
 
@@ -44,7 +44,7 @@ def beltECBEncr(src, key):
 	key_bitlen = len(key) * 4
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'enc -e -belt-ecb{} -nosalt -nopad -K {}'.format(key_bitlen, key)
+	cmd = 'enc -e -engine bee2evp -belt-ecb{} -nosalt -nopad -K {}'.format(key_bitlen, key)
 	retcode, dest, er__ = openssl(cmd, prefix)
 	return dest
 
@@ -56,7 +56,7 @@ def beltECBDecr(src, key):
 	key_bitlen = len(key) * 4
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'enc -d -belt-ecb{} -nosalt -nopad -K {}'.format(key_bitlen, key)
+	cmd = 'enc -d -engine bee2evp -belt-ecb{} -nosalt -nopad -K {}'.format(key_bitlen, key)
 	retcode, dest, er__ = openssl(cmd, prefix)
 	return dest
 
@@ -69,8 +69,7 @@ def beltCBCEncr(src, key, iv):
 	key_bitlen = len(key) * 4
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'enc -e -belt-cbc{} -nosalt -nopad -K {} -iv {}'.format(
-		key_bitlen, key, iv)
+	cmd = 'enc -e -engine bee2evp -belt-cbc{} -nosalt -nopad -K {} -iv {}'.format(key_bitlen, key, iv)
 	retcode, dest, er__ = openssl(cmd, prefix)
 	return dest
 
@@ -83,8 +82,7 @@ def beltCBCDecr(src, key, iv):
 	key_bitlen = len(key) * 4
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'enc -d -belt-cbc{} -nosalt -nopad -K {} -iv {}'.format(
-		key_bitlen, key, iv)
+	cmd = 'enc -d -engine bee2evp -belt-cbc{} -nosalt -nopad -K {} -iv {}'.format(key_bitlen, key, iv)
 	retcode, dest, er__ = openssl(cmd, prefix)
 	return dest
 
@@ -97,8 +95,7 @@ def beltCFBEncr(src, key, iv):
 	key_bitlen = len(key) * 4
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'enc -e -belt-cfb{} -nosalt -nopad -K {} -iv {}'.format(
-		key_bitlen, key, iv)
+	cmd = 'enc -e -engine bee2evp -belt-cfb{} -nosalt -nopad -K {} -iv {}'.format(key_bitlen, key, iv)
 	retcode, dest, er__ = openssl(cmd, prefix)
 	return dest
 
@@ -111,8 +108,7 @@ def beltCFBDecr(src, key, iv):
 	key_bitlen = len(key) * 4
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'enc -d -belt-cfb{} -nosalt -nopad -K {} -iv {}'.format(
-	key_bitlen, key, iv)
+	cmd = 'enc -d -engine bee2evp -belt-cfb{} -nosalt -nopad -K {} -iv {}'.format(key_bitlen, key, iv)
 	retcode, dest, er__ = openssl(cmd, prefix)
 	return dest
 
@@ -125,8 +121,7 @@ def beltCTREncr(src, key, iv):
 	key_bitlen = len(key) * 4
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'enc -e -belt-ctr{} -nosalt -nopad -K {} -iv {}'.format(
-	key_bitlen, key, iv)
+	cmd = 'enc -e -engine bee2evp -belt-ctr{} -nosalt -nopad -K {} -iv {}'.format(key_bitlen, key, iv)
 	retcode, dest, er__ = openssl(cmd, prefix)
 	return dest
 
@@ -139,8 +134,7 @@ def beltCTRDecr(src, key, iv):
 	key_bitlen = len(key) * 4
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'enc -d -belt-ctr{} -nosalt -nopad -K {} -iv {}'.format(
-		key_bitlen, key, iv)
+	cmd = 'enc -d -engine bee2evp -belt-ctr{} -nosalt -nopad -K {} -iv {}'.format(key_bitlen, key, iv)
 	retcode, dest, er__ = openssl(cmd, prefix, True)
 	return dest
 
@@ -162,7 +156,7 @@ def beltMAC(src, key):
     key_bitlen = len(key)*4
 
     prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-    cmd = 'dgst -mac belt-mac{} -macopt hexkey:{}'.format(key_bitlen, key)
+    cmd = 'dgst -engine bee2evp -mac belt-mac{} -macopt hexkey:{}'.format(key_bitlen, key)
     retcode, out, er__ = openssl(cmd, prefix)
     print('retcode:', retcode)
     print('stdout:', out)
@@ -183,7 +177,7 @@ def beltHMAC(src, key):
 	key_bitlen = len(key)*4
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'dgst -mac belt-hmac -macopt hexkey:{}'.format(256, key)
+	cmd = 'dgst -engine bee2evp -mac belt-hmac -macopt hexkey:{}'.format(256, key)
 	retcode, out, er__ = openssl(cmd, prefix)
 	mac = out.decode().split(' ')[1][:-1]
 	mac = mac.strip()
@@ -193,7 +187,7 @@ def beltHash(src):
 	plain = b64_encoder(src)[0].decode()
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'dgst -belt-hash'.format()
+	cmd = 'dgst -engine bee2evp -belt-hash'.format()
 	retcode, out, er__ = openssl(cmd, prefix)
 	hash_ = out.decode().split(' ')[1][:-1]
 	hash_ = hash_.strip()
@@ -203,7 +197,7 @@ def bash256Hash(src):
 	plain = b64_encoder(src)[0].decode()
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'dgst -bash256'.format()
+	cmd = 'dgst -engine bee2evp -bash256'.format()
 	retcode, out, er__ = openssl(cmd, prefix)
 	hash_ = out.decode().split(' ')[1][:-1]
 	hash_ = hash_.strip()
@@ -213,7 +207,7 @@ def bash384Hash(src):
 	plain = b64_encoder(src)[0].decode()
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'dgst -bash384'.format()
+	cmd = 'dgst -engine bee2evp -bash384'.format()
 	retcode, out, er__ = openssl(cmd, prefix)
 	hash_ = out.decode().split(' ')[1][:-1]
 	hash_ = hash_.strip()
@@ -223,7 +217,7 @@ def bash512Hash(src):
 	plain = b64_encoder(src)[0].decode()
 
 	prefix = 'echo ' + plain[:-1] + ' | python -m base64 -d |'
-	cmd = 'dgst -bash512'.format()
+	cmd = 'dgst -engine bee2evp -bash512'.format()
 	retcode, out, er__ = openssl(cmd, prefix)
 	hash_ = out.decode().split(' ')[1][:-1]
 	hash_ = hash_.strip()

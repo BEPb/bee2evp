@@ -19,18 +19,17 @@ def bignStdParams(name, out_filename, specified=False, cofactor=False):
 	if cofactor:
 		options += ' -pkeyopt enc_params:cofactor'
 
-	cmd = 'genpkey -genparam -algorithm bign {} -out {}'.format(
-		options, out_filename)
+	cmd = 'genpkey -genparam -engine bee2evp -algorithm bign {} -out {}'.format(options, out_filename)
 	retcode, out, er__ = openssl(cmd)
 	return out
 
 def bignGenKeypair(params_file, out_filename):
-	cmd = 'genpkey -paramfile {} -out {}'.format(params_file, out_filename)
+	cmd = 'genpkey -engine bee2evp -paramfile {} -out {}'.format(params_file, out_filename)
 	retcode, out, er__ = openssl(cmd)
 	return out
 
 def bignCalcPubkey(private_key_file, out_filename):
-	cmd = 'pkey -in {} -pubout -out {}'.format(private_key_file, out_filename)
+	cmd = 'pkey -engine bee2evp -in {} -pubout -out {}'.format(private_key_file, out_filename)
 	retcode, public_key, er__ = openssl(cmd)
 	return public_key
 

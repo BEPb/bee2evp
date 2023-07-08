@@ -240,6 +240,7 @@ def test_bign():
 	params256 = os.path.join(tmpdirname, 'params256v1.pem')
 	bignStdParams('bign-curve256v1', params256)
 	out = openssl('asn1parse -in {}'.format(params256))
+	# (1, '    0:d=0  hl=2 l=  10 prim: OBJECT            :1.2.112.0.2.0.34.101.45.3.1\n', '')
 	res = out[1].decode().find('bign-curve256v1') != -1
 	test_result('Gen params bign-curve256v1', res)
 
@@ -247,6 +248,7 @@ def test_bign():
 	params384 = os.path.join(tmpdirname, 'params384v1.pem')
 	bignStdParams('bign-curve384v1', params384)
 	out = openssl('asn1parse -in {}'.format(params384))
+	# (1, '    0:d=0  hl=2 l=  10 prim: OBJECT            :1.2.112.0.2.0.34.101.45.3.2\n', '')
 	res = out[1].decode().find('bign-curve384v1') != -1
 	test_result('Gen params bign-curve384v1', res)
 
@@ -254,6 +256,7 @@ def test_bign():
 	params512 = os.path.join(tmpdirname, 'params512v1.pem')
 	bignStdParams('bign-curve512v1', params512)
 	out = openssl('asn1parse -in {}'.format(params512))
+	# (1, '    0:d=0  hl=2 l=  10 prim: OBJECT            :1.2.112.0.2.0.34.101.45.3.3\n', '')
 	res = out[1].decode().find('bign-curve512v1') != -1
 	test_result('Gen params bign-curve512v1', res)
 
@@ -261,8 +264,13 @@ def test_bign():
 	prkey256 = os.path.join(tmpdirname,'prkey256v1.pem')
 	bignGenKeypair(params256, prkey256)
 	out = openssl('asn1parse -in {}'.format(prkey256))
-	res = (out[1].decode().find('bign-curve256v1') != -1 & out[1].decode()
-	.find('bign-pubkey') != -1)
+	# (1, '    0:d=0  hl=2 l=  63 cons: SEQUENCE          \n
+	# 2:d=1  hl=2 l=   1 prim: INTEGER           :00\n
+	# 5:d=1  hl=2 l=  24 cons: SEQUENCE          \n
+	# 7:d=2  hl=2 l=  10 prim: OBJECT            :1.2.112.0.2.0.34.101.45.2.1\n
+	# 19:d=2  hl=2 l=  10 prim: OBJECT            :1.2.112.0.2.0.34.101.45.3.1\n
+	# 31:d=1  hl=2 l=  32 prim: OCTET STRING      [HEX DUMP]:5C92AF9C871E0AB045B6091F994732BC4DD9040D055B872F696A725CBA9F271E\n', '')
+	res = (out[1].decode().find('bign-curve256v1') != -1 & out[1].decode().find('bign-pubkey') != -1)
 	test_result('Gen private key bign-curve256v1', res)
 
 	# Gen private key G.1
@@ -286,11 +294,10 @@ def test_bign():
 		f.write(asn1cnf)
 	G1prkey256der = os.path.join(tmpdirname, 'G1prkey256.der')
 	G1prkey256pem = os.path.join(tmpdirname, 'G1prkey256.pem')
-	retcode, out, er__ = openssl(
-		'asn1parse -genconf {} -out {}'.format(asn1_conf_file, G1prkey256der))
-	openssl('pkey -inform DER -in {} -outform PEM -out {}'
-	.format(G1prkey256der,G1prkey256pem))
+	retcode, out, er__ = openssl('asn1parse -genconf {} -out {}'.format(asn1_conf_file, G1prkey256der))
+	openssl('pkey -inform DER -in {} -outform PEM -out {}'.format(G1prkey256der,G1prkey256pem))
 	retcode, out, er__ = openssl('asn1parse -in {}'.format(G1prkey256pem))
+	print(out)
 	out = out.decode().strip()[out.decode().rfind('[HEX DUMP]:'):].split(':')[1]
 	res = (out == key)
 	test_result('Generate private key G.1', res)
