@@ -260,7 +260,7 @@ def test_bign():
 	out = openssl('asn1parse -in {}'.format(params512))
 	# (1, '    0:d=0  hl=2 l=  10 prim: OBJECT            :1.2.112.0.2.0.34.101.45.3.3\n', '')
 	# res = out[1].decode().find('bign-curve512v1') != -1
-	res = out[1].decode().find('1.2.112.0.2.0.34.101.45.3.1') != -1
+	res = out[1].decode().find('1.2.112.0.2.0.34.101.45.3.3') != -1
 	test_result('Gen params bign-curve512v1', res)
 
 	# Gen private key bign-curve256v1
@@ -311,20 +311,28 @@ def test_bign():
 	asn1_conf_file = os.path.join(tmpdirname, 'asn1_conf')
 	with open(asn1_conf_file,'w') as f:
 		f.write(asn1cnf)
-		print(f.write(asn1cnf))
 	G1prkey256der = os.path.join(tmpdirname, 'G1prkey256.der')
 	G1prkey256pem = os.path.join(tmpdirname, 'G1prkey256.pem')
+	G1prkey256pem = os.path.join(tmpdirname, 'G1prkey256.pem')
 	retcode, out, er__ = openssl('asn1parse -genconf {} -out {}'.format(asn1_conf_file, G1prkey256der))
+	print(retcode)
+	print(out)
+	print(er__)
 	# 140545738323072:error:0D06407A:asn1 encoding routines:a2d_ASN1_OBJECT:first num too large:../crypto/asn1/a_object.c:73:
 	# 140545738323072:error:0D0B30B7:asn1 encoding routines:asn1_str2type:illegal object:../crypto/asn1/asn1_gen.c:636:string=bign-pubkey
-	openssl('pkey -inform DER -in {} -outform PEM -out {}'.format(G1prkey256der,G1prkey256pem))
+	retcode, out, er__ = openssl('pkey -engine bee2evp -inform DER -in {} -outform PEM -out {}'.format(
+			G1prkey256der, G1prkey256pem))
+	print(retcode)
+	print(out)
+	print(er__)
 	# unable to load key
 	# 140056278078592:error:0609E09C:digital envelope routines:pkey_set_type:unsupported algorithm:../crypto/evp/p_lib.c:210:
 	# 140056278078592:error:0606F076:digital envelope routines:EVP_PKCS82PKEY:unsupported private key algorithm:../crypto/evp/evp_pkey.c:36:TYPE=1.2.112.0.2.0.34.101.45.3.1
 	# 140056278078592:error:0D0CF0A7:asn1 encoding routines:d2i_AutoPrivateKey:unsupported public key type:../crypto/asn1/d2i_pr.c:123:
 	retcode, out, er__ = openssl('asn1parse -in {}'.format(G1prkey256pem))
+	print(retcode)
 	print(out)
-
+	print(er__)
 	out = out.decode().strip()[out.decode().rfind('[HEX DUMP]:'):].split(':')[1]
 	res = (out == key)
 	test_result('Generate private key G.1', res)
