@@ -55,6 +55,5 @@ def openssl(cmd, prefix='', echo=False, type_=0):
 		return p
 
 	if (type_ == 2):
-		out = subprocess.check_output(cmd,
-						shell=True)
+		out = subprocess.check_output(cmd, shell=True)
 		return out

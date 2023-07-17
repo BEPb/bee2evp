@@ -241,8 +241,8 @@ def test_bign():
 	bignStdParams('bign-curve256v1', params256)
 	out = openssl('asn1parse -in {}'.format(params256))
 	# (1, '    0:d=0  hl=2 l=  10 prim: OBJECT            :1.2.112.0.2.0.34.101.45.3.1\n', '')
-	# res = out[1].decode().find('bign-curve256v1') != -1
-	res = out[1].decode().find('1.2.112.0.2.0.34.101.45.3.1') != -1
+	res = out[1].decode().find('bign-curve256v1') != -1
+	# res = out[1].decode().find('1.2.112.0.2.0.34.101.45.3.1') != -1
 	test_result('Gen params bign-curve256v1', res)
 
 	# Gen params bign-curve384v1
@@ -250,8 +250,8 @@ def test_bign():
 	bignStdParams('bign-curve384v1', params384)
 	out = openssl('asn1parse -in {}'.format(params384))
 	# (1, '    0:d=0  hl=2 l=  10 prim: OBJECT            :1.2.112.0.2.0.34.101.45.3.2\n', '')
-	# res = out[1].decode().find('bign-curve384v1') != -1
-	res = out[1].decode().find('1.2.112.0.2.0.34.101.45.3.2') != -1
+	res = out[1].decode().find('bign-curve384v1') != -1
+	# res = out[1].decode().find('1.2.112.0.2.0.34.101.45.3.2') != -1
 	test_result('Gen params bign-curve384v1', res)
 
 	# Gen params bign-curve512v1
@@ -259,8 +259,8 @@ def test_bign():
 	bignStdParams('bign-curve512v1', params512)
 	out = openssl('asn1parse -in {}'.format(params512))
 	# (1, '    0:d=0  hl=2 l=  10 prim: OBJECT            :1.2.112.0.2.0.34.101.45.3.3\n', '')
-	# res = out[1].decode().find('bign-curve512v1') != -1
-	res = out[1].decode().find('1.2.112.0.2.0.34.101.45.3.3') != -1
+	res = out[1].decode().find('bign-curve512v1') != -1
+	# res = out[1].decode().find('1.2.112.0.2.0.34.101.45.3.3') != -1
 	test_result('Gen params bign-curve512v1', res)
 
 	# Gen private key bign-curve256v1
@@ -273,8 +273,8 @@ def test_bign():
 	# 7:d=2  hl=2 l=  10 prim: OBJECT            :1.2.112.0.2.0.34.101.45.2.1\n
 	# 19:d=2  hl=2 l=  10 prim: OBJECT            :1.2.112.0.2.0.34.101.45.3.1\n
 	# 31:d=1  hl=2 l=  32 prim: OCTET STRING      [HEX DUMP]:5C92AF9C871E0AB045B6091F994732BC4DD9040D055B872F696A725CBA9F271E\n', '')
-	# res = (out[1].decode().find('bign-curve256v1') != -1 & out[1].decode().find('bign-pubkey') != -1)
-	res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1 & out[1].decode().find('1.2.112.0.2.0.34.101.45.3.1') != -1)
+	res = (out[1].decode().find('bign-curve256v1') != -1 & out[1].decode().find('bign-pubkey') != -1)
+	# res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1 & out[1].decode().find('1.2.112.0.2.0.34.101.45.3.1') != -1)
 	test_result('Gen private key bign-curve256v1', res)
 
 	# Gen private key G.1
@@ -341,23 +341,24 @@ def test_bign():
 	prkey384 = os.path.join(tmpdirname, 'prkey384v1.pem')
 	bignGenKeypair(params384, prkey384)
 	out = openssl('asn1parse -in {}'.format(prkey384))
-	# res = (out[1].decode().find('bign-curve384v1') != -1 & out[1].decode().find('bign-pubkey') != -1)
-	res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.3.2') != -1 & out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1)
+	res = (out[1].decode().find('bign-curve384v1') != -1 & out[1].decode().find('bign-pubkey') != -1)
+	# res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.3.2') != -1 & out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1)
 	test_result('Gen private key bign-curve384v1', res)
 
 	# Gen private key bign-curve512v1
 	prkey512 = os.path.join(tmpdirname, 'prkey512v1.pem')
 	bignGenKeypair(params512, prkey512)
 	out = openssl('asn1parse -in {}'.format(prkey512))
-	res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.3.3') != -1 & out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1)
+	res = (out[1].decode().find('bign-curve512v1') != -1 & out[1].decode().find('bign-pubkey') != -1)
+	# res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.3.3') != -1 & out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1)
 	test_result('Gen private key bign-curve512v1', res)
 
 	# Calc public key bign-curve256v1
 	pubkey256 = os.path.join(tmpdirname, 'pubkey256v1.pem')
 	bignCalcPubkey(prkey256, pubkey256)
 	out = openssl('asn1parse -in {}'.format(pubkey256))
-	# res = (out[1].decode().find('bign-curve256v1') != -1 & out[1].decode().find('bign-pubkey') != -1)
-	res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.3.1') != -1 & out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1)
+	res = (out[1].decode().find('bign-curve256v1') != -1 & out[1].decode().find('bign-pubkey') != -1)
+	# res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.3.1') != -1 & out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1)
 	test_result('Calc public key bign-curve256v1', res)
 
 	# Calc public key G.1
@@ -381,15 +382,16 @@ def test_bign():
 	pubkey384 = os.path.join(tmpdirname, 'pubkey384v1.pem')
 	bignCalcPubkey(prkey384, pubkey384)
 	out = openssl('asn1parse -in {}'.format(pubkey384))
-	# res = (out[1].decode().find('bign-curve384v1') != -1 &	out[1].decode().find('bign-pubkey') != -1)
-	res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.3.2') != -1 &	out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1)
+	res = (out[1].decode().find('bign-curve384v1') != -1 &	out[1].decode().find('bign-pubkey') != -1)
+	# res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.3.2') != -1 &	out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1)
 	test_result('Calc public key bign-curve384v1', res)
 
 	# Calc public key bign-curve512v1
 	pubkey512 = os.path.join(tmpdirname, 'pubkey512v1.pem')
 	bignCalcPubkey(prkey512, pubkey512)
 	out = openssl('asn1parse -in {}'.format(pubkey512))
-	res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.3.3') != -1 &	out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1)
+	res = (out[1].decode().find('bign-curve512v1') != -1 &	out[1].decode().find('bign-pubkey') != -1)
+	# res = (out[1].decode().find('1.2.112.0.2.0.34.101.45.3.3') != -1 &	out[1].decode().find('1.2.112.0.2.0.34.101.45.2.1') != -1)
 	test_result('Calc public key bign-curve512v1', res)
 
 	# Calc dgst belt-hash
@@ -470,7 +472,7 @@ def test_belt_kwp_dwp():
 
 	shutil.rmtree(tmpdirname)
 def btls_gen_privkey(privfile, curve):
-	cmd = 'genpkey -engine bee2evp -algorithm bign -pkeyopt params:{} -out {}'.format(curve, privfile)
+	cmd = 'genpkey -algorithm bign -pkeyopt params:{} -out {}'.format(curve, privfile)
 	retcode, block, er__ = openssl(cmd)
 	print(retcode)
 	print(block)

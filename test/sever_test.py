@@ -89,8 +89,7 @@ def btls_client_nocert(client_log_file, curves_list, ciphersuites):
 	for ciphersuite in ciphersuites:
 		for curves in curves_list:
 			if curves != 'NULL':
-				cmd = ('s_client -cipher {} -tls1_2 -curves {} -psk 123456 2>{}'
-						.format(ciphersuite, curves, client_log_file))
+				cmd = ('s_client -cipher {} -tls1_2 -curves {} -psk 123456 2>{}'.format(ciphersuite, curves, client_log_file))
 			else:
 				cmd = ('s_client -cipher {} -tls1_2 -psk 123456 2>{}'
 						.format(ciphersuite, client_log_file))
