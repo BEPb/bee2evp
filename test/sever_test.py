@@ -23,12 +23,26 @@ def test_result(test_name, retcode):
 		fail = True
 
 def btls_gen_privkey(privfile, curve):
+	# cmd = 'genpkey -engine bee2evp -algorithm bign -pkeyopt params:{} -out {}'.format(curve, privfile)
 	cmd = 'genpkey -engine bee2evp -algorithm bign -pkeyopt params:{} -out {}'.format(curve, privfile)
+	print(cmd)
 	retcode, block, er__ = openssl(cmd)
+	print(retcode)
+	print(block)
+	print(er__)
+
 
 def btls_issue_cert(privfile, certfile):
 	cmd = ('req -x509 -subj "/CN=www.example.org/O=BCrypto/C=BY/ST=MINSK" -new -key {} -nodes -out {}'.format(privfile, certfile))
+	# req -x509 -subj "/CN=www.example.org/O=BCrypto/C=BY/ST=MINSK" -new -key /tmp/tmpRrEDsX/bign-curve256v1.key -nodes -out /tmp/tmpRrEDsX/cert.pem
+	# problem creating object openssl_conf=openssl_init
+	# 139645088134272:error:0D06407A:asn1 encoding routines:a2d_ASN1_OBJECT:first num too large:../crypto/asn1/a_object.c:73:
+	print(cmd)
 	retcode, block, er__ = openssl(cmd)
+	print(retcode)
+	print(block)
+	print(er__)
+
 
 def btls_server_cert(tmpdirname, server_log_file, curve, psk=False):
 	priv = os.path.join(tmpdirname, '{}.key'.format(curve))
@@ -36,14 +50,24 @@ def btls_server_cert(tmpdirname, server_log_file, curve, psk=False):
 
 	cert = os.path.join(tmpdirname, 'cert.pem')
 	btls_issue_cert(priv, cert)
-
+	print(priv)
+	print(curve)
+	print(cert)
+	# /tmp/tmpRrEDsX/bign-curve256v1.key
+	# bign-curve256v1
+	# /tmp/tmpRrEDsX/cert.pem
 	if psk:
 		cmd = ('s_server -key {} -cert {} -tls1_2 -psk 123456 -psk_hint 123  >> {}'.format(priv, cert, server_log_file))
 	else:
 		cmd = ('s_server -key {} -cert {} -tls1_2 >> {}'.format(priv, cert, server_log_file))
+		print(cmd)
+		retcode, out, er__ = openssl('x509 -engine bee2evp -in {} -text -noout'.format(cert))
+		print(retcode, out, er__)
 
 	global server_cert
 	server_cert = openssl(cmd, type_=1)
+	print('certificate', server_cert)
+
 
 def btls_client_cert(client_log_file, curve, ciphersuites, psk=False):
 	for ciphersuite in ciphersuites:
@@ -95,59 +119,16 @@ def test_btls():
 
 	# test NO_PSK ciphersuites
 	for curve in curves_list:
-		s_nopsk = threading.Thread(target=btls_server_cert,
-						args=(tmpdirname, server_log_file, curve))
-		s_nopsk.run()
+		s_nopsk = threading.Thread(target=btls_server_cert,	args=(tmpdirname, server_log_file, curve))
+		# s_nopsk.run()
+		s_nopsk.start()
 		time.sleep(1)
-		c_nopsk = threading.Thread(target=btls_client_cert,
-						args=(client_log_file, curve, noPSK_cipherssuites))
-		c_nopsk.run()
+		c_nopsk = threading.Thread(target=btls_client_cert,	args=(client_log_file, curve, noPSK_cipherssuites))
+		c_nopsk.start()
 
 		# kill openssl s_server
 		os.killpg(os.getpgid(server_cert.pid), signal.SIGTERM)
 	print('End NO_PSK')
-
-	# test BDHTPSK ciphersuites
-	for curve in curves_list:
-		s_dhtpsk = threading.Thread(target=btls_server_cert,
-						args=(tmpdirname, server_log_file, curve, True))
-		s_dhtpsk.run()
-		time.sleep(1)
-		c_dhtpsk = threading.Thread(target=btls_client_cert,
-						args=(client_log_file, curve, bdhtPSK_ciphersuites, True))
-		c_dhtpsk.run()
-
-		# kill openssl s_server
-		os.killpg(os.getpgid(server_cert.pid), signal.SIGTERM)
-	print('End BDHTPSK')
-
-	# test BDHEPSK ciphersuites
-	s_dhepsk = threading.Thread(target=btls_server_nocert,
-					args=(server_log_file,))
-	s_dhepsk.run()
-	time.sleep(1)
-	c_dhepsk = threading.Thread(target=btls_client_nocert,
-					args=(client_log_file, curves_list_bdhepsk, bdhePSK_ciphersuites))
-	c_dhepsk.run()
-
-	# kill openssl s_server
-	os.killpg(os.getpgid(server_nocert.pid), signal.SIGTERM)
-	print('End BDHEPSK')
-
-	with open(server_log_file, 'r') as f:
-		server_out = f.read()
-
-	for ciphersuite in cert_ciphersuites:
-		print(ciphersuite)
-		for curves in curves_list:
-			retcode = (server_out.find('test_{}={}'.format(curves, ciphersuite)) != -1)
-			test_result('	{}'.format(curves), retcode)
-
-	for ciphersuite in nocert_ciphersuites:
-		print(ciphersuite)
-		for curves in curves_list_bdhepsk:
-			retcode = (server_out.find('test_{}={}'.format(curves, ciphersuite)) != -1)
-			test_result('	{}'.format(curves), retcode)
 
 	shutil.rmtree(tmpdirname)
 

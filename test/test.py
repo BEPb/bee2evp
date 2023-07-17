@@ -472,10 +472,18 @@ def test_belt_kwp_dwp():
 def btls_gen_privkey(privfile, curve):
 	cmd = 'genpkey -engine bee2evp -algorithm bign -pkeyopt params:{} -out {}'.format(curve, privfile)
 	retcode, block, er__ = openssl(cmd)
+	print(retcode)
+	print(block)
+	print(er__)
+
 
 def btls_issue_cert(privfile, certfile):
 	cmd = ('req -x509 -subj "/CN=www.example.org/O=BCrypto/C=BY/ST=MINSK" -new -key {} -nodes -out {}'.format(privfile, certfile))
 	retcode, block, er__ = openssl(cmd)
+	print(retcode)
+	print(block)
+	print(er__)
+
 
 '''def btls_server256_nopsk(tmpdirname, server_log_file):
 	priv256 = os.path.join(tmpdirname, 'priv256.key')
