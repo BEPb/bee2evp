@@ -27,8 +27,8 @@ logging.basicConfig(filename='openssl.log', level=logging.DEBUG,
 
 def openssl(cmd, prefix='', echo=False, type_=0):
 	cmd = '{} {} {}'.format(prefix, OPENSSL_EXE_PATH, cmd)
-	if echo:
-		print(cmd)
+	print(cmd)
+
 	logging.debug('cmd OpenSSL: %s', cmd)
 	logging.debug("arguments OpenSSL: %s", cmd.split("|"))
 

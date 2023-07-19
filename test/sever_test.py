@@ -74,6 +74,7 @@ def btls_client_cert(client_log_file, curve, ciphersuites, psk=False):
 		if psk:
 			cmd = ('s_client -cipher {} -tls1_2 -psk 123456 2>{}'.format(ciphersuite, client_log_file))
 		else:
+			print(cmd)
 			cmd = ('s_client -cipher {} -tls1_2 2>{}'.format(ciphersuite, client_log_file))
 
 		openssl(cmd, prefix='echo test_{}={} |'.format(curve, ciphersuite), type_=2)
@@ -118,12 +119,16 @@ def test_btls():
 
 	# test NO_PSK ciphersuites
 	for curve in curves_list:
+		print("Start arg curve - ", curve)
 		s_nopsk = threading.Thread(target=btls_server_cert,	args=(tmpdirname, server_log_file, curve))
-		# s_nopsk.run()
-		s_nopsk.start()
+		s_nopsk.run()
+		# s_nopsk.start()
+		print('Server run!')
 		time.sleep(1)
 		c_nopsk = threading.Thread(target=btls_client_cert,	args=(client_log_file, curve, noPSK_cipherssuites))
-		c_nopsk.start()
+		c_nopsk.run()
+		# c_nopsk.start()
+		print('Client run!')
 
 		# kill openssl s_server
 		os.killpg(os.getpgid(server_cert.pid), signal.SIGTERM)
