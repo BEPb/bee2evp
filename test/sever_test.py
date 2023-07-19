@@ -74,6 +74,7 @@ def btls_client_cert(client_log_file, curve, ciphersuites, psk=False):
 		if psk:
 			cmd = ('s_client -cipher {} -tls1_2 -psk 123456 2>{}'.format(ciphersuite, client_log_file))
 		else:
+			print('Client no psk')
 			print(cmd)
 			cmd = ('s_client -cipher {} -tls1_2 2>{}'.format(ciphersuite, client_log_file))
 
