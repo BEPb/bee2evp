@@ -56,10 +56,11 @@ def btls_server_cert(tmpdirname, server_log_file, curve, psk=False):
 	# /tmp/tmpRrEDsX/bign-curve256v1.key
 	# bign-curve256v1
 	# /tmp/tmpRrEDsX/cert.pem
+
 	if psk:
 		cmd = ('s_server -key {} -cert {} -tls1_2 -psk 123456 -psk_hint 123  >> {}'.format(priv, cert, server_log_file))
 	else:
-		cmd = ('s_server -key {} -cert {} -tls1_2 >> {}'.format(priv, cert, server_log_file))
+		cmd = ('s_server -key {} -cert {} -tls1_2 -accept 2034 >> {}'.format(priv, cert, server_log_file))
 		print(cmd)
 		retcode, out, er__ = openssl('x509 -engine bee2evp -in {} -text -noout'.format(cert))
 		print(retcode, out, er__)
@@ -75,14 +76,13 @@ def btls_client_cert(client_log_file, curve, ciphersuites, psk=False):
 			cmd = ('s_client -cipher {} -tls1_2 -psk 123456 2>{}'.format(ciphersuite, client_log_file))
 		else:
 			print('Client no psk')
+			cmd = ('s_client -connect localhost:2023 -cipher {} -tls1_2 2>{}'.format(ciphersuite, client_log_file))
 			print(cmd)
-			cmd = ('s_client -cipher {} -tls1_2 2>{}'.format(ciphersuite, client_log_file))
 
 		openssl(cmd, prefix='echo test_{}={} |'.format(curve, ciphersuite), type_=2)
 
 def btls_server_nocert(server_log_file):
-	cmd = ('s_server -tls1_2 -psk 123456 -psk_hint 123 -nocert >> {}'
-			.format(server_log_file))
+	cmd = ('s_server -tls1_2 -psk 123456 -psk_hint 123 -nocert >> {}'.format(server_log_file))
 
 	global server_nocert
 	server_nocert = openssl(cmd, type_=1)
@@ -93,8 +93,7 @@ def btls_client_nocert(client_log_file, curves_list, ciphersuites):
 			if curves != 'NULL':
 				cmd = ('s_client -cipher {} -tls1_2 -curves {} -psk 123456 2>{}'.format(ciphersuite, curves, client_log_file))
 			else:
-				cmd = ('s_client -cipher {} -tls1_2 -psk 123456 2>{}'
-						.format(ciphersuite, client_log_file))
+				cmd = ('s_client -cipher {} -tls1_2 -psk 123456 2>{}'.format(ciphersuite, client_log_file))
 			openssl(cmd, prefix='echo test_{}={} |'.format(curves, ciphersuite), type_=2)
 
 def test_btls():
@@ -122,13 +121,14 @@ def test_btls():
 	for curve in curves_list:
 		print("Start arg curve - ", curve)
 		s_nopsk = threading.Thread(target=btls_server_cert,	args=(tmpdirname, server_log_file, curve))
-		s_nopsk.run()
-		# s_nopsk.start()
+		# s_nopsk.run()
+		s_nopsk.start()
 		print('Server run!')
+		print('server_cert.pid - ', server_cert.pid)
 		time.sleep(1)
 		c_nopsk = threading.Thread(target=btls_client_cert,	args=(client_log_file, curve, noPSK_cipherssuites))
-		c_nopsk.run()
-		# c_nopsk.start()
+		# c_nopsk.run()
+		c_nopsk.start()
 		print('Client run!')
 
 		# kill openssl s_server
