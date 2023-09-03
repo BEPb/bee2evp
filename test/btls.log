@@ -1,0 +1,212 @@
+pi@bee2test:~ $ pythonst:~ $ sudo nano /home/pi/app/bee2evp/test/bee2_test_btls.py
+ /usr/local/bin/openssl version
+version: success
+OpenSSL 1.1.1v  1 Aug 2023
+
+ /usr/local/bin/openssl engine -c -t bee2evp
+engine: success
+(bee2evp) Bee2evp Engine [belt + bign + bash]
+ [belt-dwp-tls, belt-ecb128, belt-ecb192, belt-ecb256, belt-cbc128, belt-cbc192, belt-cbc256, belt-cfb128, belt-cfb192, belt-cfb256, belt-ctr128, belt-ctr192, belt-ctr256, belt-dwp128, belt-dwp192, belt-dwp256, belt-kwp128, belt-kwp192, belt-kwp256, bash256, bash384, bash512, belt-hash, bign-with-hspec, bign-with-hbelt, bign-with-bash256, bign-with-bash384, bign-with-bash512, bign-keytransport, bign-curve256v1, bign-curve384v1, bign-curve512v1, bign-primefield, bign-pubkey, belt-mac128, belt-mac192, belt-mac256, belt-hmac]
+     [ available ]
+
+####### btls_server_cert start ##########
+####### btls_gen_privkey start ##########
+ /usr/local/bin/openssl genpkey -algorithm bign -pkeyopt params:bign-curve256v1 -out /tmp/tmpna5jo184/bign-curve256v1.key
+1
+b''
+b''
+####### btls_gen_privkey end ##########
+####### btls_issue_cert start ##########
+ /usr/local/bin/openssl req -x509 -subj "/CN=www.example.org/O=BCrypto/C=BY/ST=MINSK" -new -key /tmp/tmpna5jo184/bign-curve256v1.key -nodes -out /tmp/tmpna5jo184/cert.pem
+1
+b''
+b''
+####### btls_issue_cert end ##########
+
+ /usr/local/bin/openssl s_server -key /tmp/tmpna5jo184/bign-curve256v1.key -cert /tmp/tmpna5jo184/cert.pem -tls1_2 >> /tmp/tmpna5jo184/s_log.txt
+####### btls_server_cert end ##########
+
+####### btls_client_cert start ##########
+echo test_bign-curve256v1=DHE-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHE-BIGN-WITH-BELT-DWP-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve256v1=DHE-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHE-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve256v1=DHT-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHT-BIGN-WITH-BELT-DWP-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve256v1=DHT-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHT-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+####### btls_client_cert end ##########
+
+####### btls_server_cert start ##########
+####### btls_gen_privkey start ##########
+ /usr/local/bin/openssl genpkey -algorithm bign -pkeyopt params:bign-curve384v1 -out /tmp/tmpna5jo184/bign-curve384v1.key
+1
+b''
+b''
+####### btls_gen_privkey end ##########
+####### btls_issue_cert start ##########
+ /usr/local/bin/openssl req -x509 -subj "/CN=www.example.org/O=BCrypto/C=BY/ST=MINSK" -new -key /tmp/tmpna5jo184/bign-curve384v1.key -nodes -out /tmp/tmpna5jo184/cert.pem
+1
+b''
+b''
+####### btls_issue_cert end ##########
+
+ /usr/local/bin/openssl s_server -key /tmp/tmpna5jo184/bign-curve384v1.key -cert /tmp/tmpna5jo184/cert.pem -tls1_2 >> /tmp/tmpna5jo184/s_log.txt
+####### btls_server_cert end ##########
+
+####### btls_client_cert start ##########
+echo test_bign-curve384v1=DHE-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHE-BIGN-WITH-BELT-DWP-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve384v1=DHE-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHE-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve384v1=DHT-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHT-BIGN-WITH-BELT-DWP-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve384v1=DHT-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHT-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+####### btls_client_cert end ##########
+
+####### btls_server_cert start ##########
+####### btls_gen_privkey start ##########
+ /usr/local/bin/openssl genpkey -algorithm bign -pkeyopt params:bign-curve512v1 -out /tmp/tmpna5jo184/bign-curve512v1.key
+1
+b''
+b''
+####### btls_gen_privkey end ##########
+####### btls_issue_cert start ##########
+ /usr/local/bin/openssl req -x509 -subj "/CN=www.example.org/O=BCrypto/C=BY/ST=MINSK" -new -key /tmp/tmpna5jo184/bign-curve512v1.key -nodes -out /tmp/tmpna5jo184/cert.pem
+1
+b''
+b''
+####### btls_issue_cert end ##########
+
+ /usr/local/bin/openssl s_server -key /tmp/tmpna5jo184/bign-curve512v1.key -cert /tmp/tmpna5jo184/cert.pem -tls1_2 >> /tmp/tmpna5jo184/s_log.txt
+####### btls_server_cert end ##########
+
+####### btls_client_cert start ##########
+echo test_bign-curve512v1=DHE-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHE-BIGN-WITH-BELT-DWP-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve512v1=DHE-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHE-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve512v1=DHT-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHT-BIGN-WITH-BELT-DWP-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve512v1=DHT-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHT-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
+####### btls_client_cert end ##########
+
+
+ ****** End NO_PSK ******
+
+####### btls_server_cert start ##########
+####### btls_gen_privkey start ##########
+ /usr/local/bin/openssl genpkey -algorithm bign -pkeyopt params:bign-curve256v1 -out /tmp/tmpna5jo184/bign-curve256v1.key
+1
+b''
+b''
+####### btls_gen_privkey end ##########
+####### btls_issue_cert start ##########
+ /usr/local/bin/openssl req -x509 -subj "/CN=www.example.org/O=BCrypto/C=BY/ST=MINSK" -new -key /tmp/tmpna5jo184/bign-curve256v1.key -nodes -out /tmp/tmpna5jo184/cert.pem
+1
+b''
+b''
+####### btls_issue_cert end ##########
+
+ /usr/local/bin/openssl s_server -key /tmp/tmpna5jo184/bign-curve256v1.key -cert /tmp/tmpna5jo184/cert.pem -tls1_2 -psk 123456 -psk_hint 123  >> /tmp/tmpna5jo184/s_log.txt
+####### btls_server_cert end ##########
+
+####### btls_client_cert start ##########
+echo test_bign-curve256v1=DHT-PSK-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHT-PSK-BIGN-WITH-BELT-DWP-HBELT -tls1_2 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve256v1=DHT-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHT-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+####### btls_client_cert end ##########
+
+####### btls_server_cert start ##########
+####### btls_gen_privkey start ##########
+ /usr/local/bin/openssl genpkey -algorithm bign -pkeyopt params:bign-curve384v1 -out /tmp/tmpna5jo184/bign-curve384v1.key
+1
+b''
+b''
+####### btls_gen_privkey end ##########
+####### btls_issue_cert start ##########
+ /usr/local/bin/openssl req -x509 -subj "/CN=www.example.org/O=BCrypto/C=BY/ST=MINSK" -new -key /tmp/tmpna5jo184/bign-curve384v1.key -nodes -out /tmp/tmpna5jo184/cert.pem
+1
+b''
+b''
+####### btls_issue_cert end ##########
+
+ /usr/local/bin/openssl s_server -key /tmp/tmpna5jo184/bign-curve384v1.key -cert /tmp/tmpna5jo184/cert.pem -tls1_2 -psk 123456 -psk_hint 123  >> /tmp/tmpna5jo184/s_log.txt
+####### btls_server_cert end ##########
+
+####### btls_client_cert start ##########
+echo test_bign-curve384v1=DHT-PSK-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHT-PSK-BIGN-WITH-BELT-DWP-HBELT -tls1_2 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve384v1=DHT-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHT-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+####### btls_client_cert end ##########
+
+####### btls_server_cert start ##########
+####### btls_gen_privkey start ##########
+ /usr/local/bin/openssl genpkey -algorithm bign -pkeyopt params:bign-curve512v1 -out /tmp/tmpna5jo184/bign-curve512v1.key
+1
+b''
+b''
+####### btls_gen_privkey end ##########
+####### btls_issue_cert start ##########
+ /usr/local/bin/openssl req -x509 -subj "/CN=www.example.org/O=BCrypto/C=BY/ST=MINSK" -new -key /tmp/tmpna5jo184/bign-curve512v1.key -nodes -out /tmp/tmpna5jo184/cert.pem
+1
+b''
+b''
+####### btls_server_cert end ##########
+
+####### btls_client_cert start ##########
+echo test_bign-curve512v1=DHT-PSK-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHT-PSK-BIGN-WITH-BELT-DWP-HBELT -tls1_2 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve512v1=DHT-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHT-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+####### btls_client_cert end ##########
+
+
+ ****** End BDHTPSK ******
+
+####### btls_server_nocert start ##########
+ /usr/local/bin/openssl s_server -tls1_2 -psk 123456 -psk_hint 123 -nocert >> /tmp/tmpna5jo184/s_log.txt
+####### btls_server_nocert end ##########
+
+####### btls_client_nocert start ##########
+echo test_NULL=DHE-PSK-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-DWP-HBELT -tls1_2 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve256v1=DHE-PSK-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-DWP-HBELT -tls1_2 -curves bign-curve256v1 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve384v1=DHE-PSK-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-DWP-HBELT -tls1_2 -curves bign-curve384v1 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve512v1=DHE-PSK-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-DWP-HBELT -tls1_2 -curves bign-curve512v1 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve256v1:bign-curve384v1:bign-curve512v1=DHE-PSK-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-DWP-HBELT -tls1_2 -curves bign-curve256v1:bign-curve384v1:bign-curve512v1 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve256v1:bign-curve512v1=DHE-PSK-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-DWP-HBELT -tls1_2 -curves bign-curve256v1:bign-curve512v1 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_NULL=DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve256v1=DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 -curves bign-curve256v1 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve384v1=DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 -curves bign-curve384v1 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve512v1=DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 -curves bign-curve512v1 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve256v1:bign-curve384v1:bign-curve512v1=DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 -curves bign-curve256v1:bign-curve384v1:bign-curve512v1 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+echo test_bign-curve256v1:bign-curve512v1=DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 -curves bign-curve256v1:bign-curve512v1 -psk 123456 2>/tmp/tmpna5jo184/c_log.txt
+####### btls_client_nocert end ##########
+
+
+ ****** End BDHEPSK *********
+
+DHT-PSK-BIGN-WITH-BELT-DWP-HBELT
+        bign-curve256v1: success
+        bign-curve384v1: success
+        bign-curve512v1: success
+DHT-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT
+        bign-curve256v1: success
+        bign-curve384v1: success
+        bign-curve512v1: success
+DHE-BIGN-WITH-BELT-DWP-HBELT
+        bign-curve256v1: success
+        bign-curve384v1: success
+        bign-curve512v1: success
+DHE-BIGN-WITH-BELT-CTR-MAC-HBELT
+        bign-curve256v1: success
+        bign-curve384v1: success
+        bign-curve512v1: success
+DHT-BIGN-WITH-BELT-DWP-HBELT
+        bign-curve256v1: success
+        bign-curve384v1: success
+        bign-curve512v1: success
+DHT-BIGN-WITH-BELT-CTR-MAC-HBELT
+        bign-curve256v1: success
+        bign-curve384v1: success
+        bign-curve512v1: success
+DHE-PSK-BIGN-WITH-BELT-DWP-HBELT
+        NULL: success
+        bign-curve256v1: success
+        bign-curve384v1: success
+        bign-curve512v1: success
+        bign-curve256v1:bign-curve384v1:bign-curve512v1: success
+        bign-curve256v1:bign-curve512v1: success
+DHE-PSK-BIGN-WITH-BELT-CTR-MAC-HBELT
+        NULL: success
+        bign-curve256v1: success
+        bign-curve384v1: success
+        bign-curve512v1: success
+        bign-curve256v1:bign-curve384v1:bign-curve512v1: success
+        bign-curve256v1:bign-curve512v1: success
