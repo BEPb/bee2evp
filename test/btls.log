@@ -10,28 +10,50 @@ engine: success
      [ available ]
 
 ####### btls_server_cert start ##########
-####### btls_gen_privkey start ##########
+####### btls_gen_privkey start ########## - генерируем приватный ключ
+# эта строка кода генерирует приватный ключ алгоритма Бигном, используя кривую
+bign-curve256v1, и записывает сгенерированный ключ в файл /tmp/tmpna5jo184/bign-curve256v1.key
  /usr/local/bin/openssl genpkey -algorithm bign -pkeyopt params:bign-curve256v1 -out /tmp/tmpna5jo184/bign-curve256v1.key
 1
 b''
 b''
 ####### btls_gen_privkey end ##########
-####### btls_issue_cert start ##########
+####### btls_issue_cert start ########## - генерируем сертификат
+# эта строка кода создает самоподписанный сертификат X.509 на основе приватного
+ ключа, сохраненного в файле /tmp/tmpna5jo184/bign-curve256v1.key, и записывает
+ созданный сертификат в файл /tmp/tmpna5jo184/cert.pem.
  /usr/local/bin/openssl req -x509 -subj "/CN=www.example.org/O=BCrypto/C=BY/ST=MINSK" -new -key /tmp/tmpna5jo184/bign-curve256v1.key -nodes -out /tmp/tmpna5jo184/cert.pem
 1
 b''
 b''
 ####### btls_issue_cert end ##########
 
+# Запускаем сервер
+# эта команда запускает простой TLS сервер, использующий ключ и сертификат,
+расположенные по указанным путям. Соединения будут использовать TLS версии 1.2,
+ а вывод данных сервера будет записан в файл /tmp/tmpna5jo184/s_log.txt.
  /usr/local/bin/openssl s_server -key /tmp/tmpna5jo184/bign-curve256v1.key -cert /tmp/tmpna5jo184/cert.pem -tls1_2 >> /tmp/tmpna5jo184/s_log.txt
 ####### btls_server_cert end ##########
 
 ####### btls_client_cert start ##########
+# эта команда передает строку "test_bign-curve256v1=DHE-BIGN-WITH-BELT-DWP-HBELT"
+в OpenSSL, который использует ее, когда устанавливает защищенное соединение с TLS
+сервером, используя криптосистему с набором шифров DHE-BIGN-WITH-BELT-DWP-HBELT
+ и TLS версию 1.2.
 echo test_bign-curve256v1=DHE-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHE-BIGN-WITH-BELT-DWP-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
 echo test_bign-curve256v1=DHE-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHE-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
 echo test_bign-curve256v1=DHT-BIGN-WITH-BELT-DWP-HBELT | /usr/local/bin/openssl s_client -cipher DHT-BIGN-WITH-BELT-DWP-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
 echo test_bign-curve256v1=DHT-BIGN-WITH-BELT-CTR-MAC-HBELT | /usr/local/bin/openssl s_client -cipher DHT-BIGN-WITH-BELT-CTR-MAC-HBELT -tls1_2 2>/tmp/tmpna5jo184/c_log.txt
 ####### btls_client_cert end ##########
+
+
+
+
+
+
+
+
+
 
 ####### btls_server_cert start ##########
 ####### btls_gen_privkey start ##########
